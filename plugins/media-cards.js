@@ -14,9 +14,13 @@ plugin.init = function() {
 plugin.component.renderers.content = function(element) {
 	var plugin = this;
 	var item = this.component;
-	return item.parentRenderer('content', arguments).css({
+	item.parentRenderer('content', arguments).css({
 		"width": parseInt(plugin.config.get("presentation.maxCardWidth"), 10)
 	});
+	// TODO: it is done to prevent modeSwitch display css property
+	// changing (none->block) on hover. Should be done in moderation plugin.
+	item.view.get("frame").children("." + item.cssPrefix + "modeSwitch").remove();
+	return element;
 };
 
 plugin.events = {
