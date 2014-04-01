@@ -49,6 +49,34 @@ dashboard.config.ecl = [{
 	}
 }, {
 	"component": "Group",
+	"name": "presentation",
+	"type": "object",
+	"config": {
+		"title": "Presentation"
+	},
+	"items":[{
+		"component": "Input",
+		"name": "maxCardWidth",
+		"type": "number",
+		"config": {
+			"title": "Maximum card width",
+			"desc": "Specify a maximum width (in pixels) of a media card.",
+			"options": [],
+			"data": {"sample": 250}
+		}
+	}, {
+		"component": "Input",
+		"name": "columnWidth",
+		"type": "number",
+		"config": {
+			"title": "Cards columns width",
+			"desc": "Specify column width (in pixels).",
+			"options": [],
+			"data": {"sample": 270}
+		}
+	}]
+}, {
+	"component": "Group",
 	"name": "dependencies",
 	"type": "object",
 	"config": {

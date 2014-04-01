@@ -7,6 +7,10 @@ var gallery = Echo.App.manifest("Echo.Apps.MediaGallery");
 
 gallery.config = {
 	"targetURL": undefined,
+	"presentation": {
+		"maxCardWidth": 250,
+		"columnWidth": 270
+	},
 	"dependencies": {
 		"Janrain": {"appId": undefined},
 		"StreamServer": {"appkey": undefined}
@@ -40,6 +44,29 @@ gallery.renderers.content = function(element) {
 		"config": $.extend(true, {}, this.config.get("advanced"), {
 			"target": element,
 			"targetURL": this.config.get("targetURL"),
+			"postComposer": {
+				"visible": false
+			},
+			"replyComposer": {
+				"visible": false
+			},
+			"topPosts": {
+				"visible": false
+			},
+			"allPosts": {
+				"displayCounter": false,
+				"initialIntentsDisplayMode": "compact",
+				"replyNestingLevels": 0,
+				"plugins": [{
+					"name": "MediaCard",
+					"presentation": {
+						"maxCardWidth": this.config.get("presentation.maxCardWidth")
+					}
+				}, {
+					"name": "PinboardVisualization",
+					"columnWidth": this.config.get("presentation.columnWidth")
+				}]
+			},
 			"dependencies": this.config.get("dependencies")
 		})
 	});
