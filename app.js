@@ -9,7 +9,7 @@ gallery.config = {
 	"targetURL": undefined,
 	"presentation": {
 		"maxCardWidth": 250,
-		"columnWidth": 270
+		"layoutMode": "masonry" //"fitRows"
 	},
 	"dependencies": {
 		"Janrain": {"appId": undefined},
@@ -47,16 +47,14 @@ gallery.renderers.content = function(element) {
 			"postComposer": {
 				"visible": false
 			},
-			"replyComposer": {
-				"visible": false
-			},
 			"topPosts": {
 				"visible": false
 			},
 			"allPosts": {
+				"asyncItemsRendering": true,
 				"displayCounter": false,
 				"initialIntentsDisplayMode": "compact",
-				"replyNestingLevels": 0,
+				"replyNestingLevels": 1,
 				"plugins": [{
 					"name": "MediaCard",
 					"presentation": {
@@ -64,7 +62,10 @@ gallery.renderers.content = function(element) {
 					}
 				}, {
 					"name": "PinboardVisualization",
-					"columnWidth": this.config.get("presentation.columnWidth")
+					"presentation": {
+						"maxCardWidth": this.config.get("presentation.maxCardWidth"),
+						"layoutMode": this.config.get("presentation.layoutMode")
+					}
 				}]
 			},
 			"dependencies": this.config.get("dependencies")

@@ -24,16 +24,25 @@ plugin.config = {
 			"easing": "linear",
 			"queue": false
 		},
-		"masonry": {
-			"columnWidth": 270
-		},
+		"layoutMode": undefined,
+		//"masonry": {
+		//	"columnWidth": 260
+		//},
 		"animationEngine": isMozillaBrowser ? "jquery" : "best-available"
 	}
 };
 
 plugin.init = function() {
+	var layoutMode = this.config.get("presentation.layoutMode") || "masonry";
+	var itemWidth = this.config.get("presentation.maxCardWidth");
+	// TODO: reimplement margin definition for items to make free space by vertical the same as
+	// the horisontal one.
+	var itemMargin = 10; // this is margin-bottom of current items visualization.
+
 	this.component.config.set("slideTimeout", 0);
-	this.config.set("masonry.columnWidth", this.config.get("columnWidth"));
+
+	this.config.set("isotope.layoutMode", layoutMode);
+	this.config.set("isotope." + layoutMode + ".columnWidth", itemWidth + itemMargin);
 };
 
 plugin.enabled = function() {
@@ -42,12 +51,15 @@ plugin.enabled = function() {
 
 plugin.dependencies = [{
 	"loaded": function() { return !!Echo.jQuery().isotope; },
-	"url": "{config:cdnBaseURL.sdk}/third-party/jquery/jquery.isotope.min.js"
+	"url": "{config:baseURL.sdk}/third-party/jquery/jquery.isotope.min.js"
 }];
 
 plugin.events = {
-	"Echo.Conversations.NestedCard.onMediaLoad": function(topic, args) {
-	//	this._refreshView();
+	"Echo.StreamServer.Controls.Stream.onRender": function(topic, args) {
+		this._refreshView();
+	},
+	"Echo.StreamServer.Controls.Stream.onRefresh": function(topic, args) {
+		this._refreshView();
 	},
 	"Echo.StreamServer.Controls.Stream.Item.Plugins.MediaCard.onChangeView": function(topic, args) {
 		this._refreshView();
