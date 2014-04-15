@@ -14,7 +14,7 @@
         "id": "instances",
         "type": "instances",
         "title": "Instances",
-        "script": "{%=baseURL%}/dashboard.js",
+        "script": "{%=baseURLs.prod%}/dashboard.js",
         "component": "Echo.Apps.MediaGallery.Dashboard",
         "config": {
            "instanceManager": {
@@ -26,16 +26,19 @@
             "domains": "{data:apps.streamserver.domains}"
         }
     }, {
-	"id": "docs",
-	"type": "external",
-	"title": "Documentation",
-	"config": {
-		"src": "http://emb.echoplatform.com/mediagallery/docs/overview/"
-	}
+      "id": "docs",
+      "type": "external",
+      "title": "Documentation",
+      "config": {
+        "src": "http://emb.echoplatform.com/mediagallery/docs/overview/"
+      }
     }],
     "client_widget": {
         "component": "Echo.Apps.MediaGallery",
-        "script": "{%=baseURL%}/app.js"
+        "scripts": {
+          "dev": "{%=baseURLs.dev%}/app.js",
+          "prod": "{%=baseURLs.prod%}/app.js"
+        }
     },
     "cloudapp_protocol_version": "1.0.0"
 }
