@@ -27,9 +27,6 @@ plugin.config = {
 			"queue": false
 		},
 		"layoutMode": undefined,
-		//"masonry": {
-		//	"columnWidth": 260
-		//},
 		"animationEngine": isMozillaBrowser ? "jquery" : "best-available"
 	}
 };

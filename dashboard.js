@@ -48,6 +48,15 @@ dashboard.config.ecl = [{
 		}
 	}
 }, {
+	"component": "Checkbox",
+	"name": "nativeSubmissions",
+	"type": "boolean",
+	"default": true,
+	"config": {
+		"title": "Enable native submissions",
+		"desc": "If enabled, users will have an ability to post their own media"
+	}
+}, {
 	"component": "Group",
 	"name": "presentation",
 	"type": "object",
@@ -65,14 +74,33 @@ dashboard.config.ecl = [{
 			"data": {"sample": 250}
 		}
 	}, {
-		"component": "Input",
-		"name": "columnWidth",
-		"type": "number",
+		"component": "Select",
+		"name": "layoutMode",
+		"type": "string",
+		"default": "masonry",
 		"config": {
-			"title": "Cards columns width",
-			"desc": "Specify column width (in pixels).",
-			"options": [],
-			"data": {"sample": 270}
+			"title": "Media Cards layout mode",
+			"desc": "",
+			"options": [{
+				"title": "Masonry",
+				"value": "masonry"
+			}, {
+				"title": "Vertical",
+				"value": "vertical"
+			}, {
+				"title": "FitRows",
+				"value": "fitRows"
+			}],
+			"data": {}
+		}
+	}, {
+		"component": "Checkbox",
+		"name": "streamlineMode",
+		"type": "boolean",
+		"default": false,
+		"config": {
+			"title": "Enable Streamline mode",
+			"desc": "If enabled, will display pure media contents with additional info on the back of it"
 		}
 	}]
 }, {

@@ -7,9 +7,11 @@ var gallery = Echo.App.manifest("Echo.Apps.MediaGallery");
 
 gallery.config = {
 	"targetURL": undefined,
+	"nativeSubmissions": true,
 	"presentation": {
 		"maxCardWidth": 250,
-		"layoutMode": "masonry" //"fitRows"
+		"layoutMode": "masonry",
+		"streamlineMode": false
 	},
 	"dependencies": {
 		"Janrain": {"appId": undefined},
@@ -21,12 +23,30 @@ gallery.config = {
 gallery.dependencies = [{
 	"url": "//echoplatform.com/sandbox/staging/apps/echo/conversations/v1.4/app.js",
 	"app": "Echo.Apps.Conversations"
+}, {
+	"loaded": function() { return !!Echo.GUI; },
+	"url": "{config:cdnBaseURL.sdk}/gui.pack.js"
+}, {
+	"url": "{config:cdnBaseURL.sdk}/gui.pack.css"
 }];
 
 gallery.templates.main =
 	'<div class="{class:container}">' +
+		'<div class="{class:submitPanel}">' +
+			'<div class="{class:submitHead}">' +
+				'<div class="{class:submitHeadBrand}">{label:submitHeadBrand}</div>' +
+				'<div class="{class:submitHeadText}">{label:submitHeadText}</div>' +
+			'</div>' +
+			'<button class="{class:submitButton} btn btn-primary btn-small"></button>' +
+		'</div>' +
 		'<div class="{class:content}"></div>' +
 	'</div>';
+
+gallery.labels = {
+	"submitHeadBrand": "Participate in our amazing video wall",
+	"submitHeadText": "Tweet, Instagram, or Facebook with #awesome tag or submit your photos right on the page!",
+	"submitButtonText": "Submit your media"
+};
 
 gallery.init = function() {
 	this._removeUserInvalidationFrom(this);
@@ -34,7 +54,32 @@ gallery.init = function() {
 	this.ready();
 };
 
+gallery.renderers.submitPanel = function(element) {
+	return element;
+};
+
+gallery.renderers.submitButton = function(element) {
+	var self = this;
+	new Echo.GUI.Button({
+		"target": element,
+		"icon": false,
+		"disabled": false,
+		"label": this.labels.get("submitButtonText")
+	});
+	this.set("modalComposer", new Echo.GUI.Modal({
+		"show": false,
+		"data": {
+			"title": this.labels.get("submitButtonText")
+		}
+	}));
+	element.click(function() {
+		self.get("modalComposer").show();
+	});
+	return element;
+};
+
 gallery.renderers.content = function(element) {
+	var composerTarget = this.get("modalComposer").element.children(".modal-body");
 	this.initComponent({
 		"id": "Conversations",
 		"component": "Echo.Apps.Conversations",
@@ -42,9 +87,10 @@ gallery.renderers.content = function(element) {
 			"target": element,
 			"targetURL": this.config.get("targetURL"),
 			"postComposer": {
-				"visible": false
+				"visible": this.config.get("nativeSubmissions")
 			},
 			"replyComposer": {
+				"visible": !this.config.get("presentation.streamlineMode"),
 				"contentTypes": {
 					"comments": {
 						"enabled": false
@@ -65,7 +111,8 @@ gallery.renderers.content = function(element) {
 				"plugins": [{
 					"name": "MediaCard",
 					"presentation": {
-						"maxCardWidth": this.config.get("presentation.maxCardWidth")
+						"maxCardWidth": this.config.get("presentation.maxCardWidth"),
+						"streamlineMode": this.config.get("presentation.streamlineMode")
 					}
 				}, {
 					"name": "MediaCardCollection",
@@ -78,6 +125,10 @@ gallery.renderers.content = function(element) {
 			"auth": {
 				"allowAnonymousSubmission": true
 			},
+			"plugins": [{
+				"name": "ModalComposer",
+				"target": composerTarget
+			}],
 			"dependencies": this.config.get("dependencies")
 		})
 	});
@@ -100,6 +151,13 @@ gallery.methods._removeUserInvalidationFrom = function() {
 		});
 	});
 };
+
+gallery.css =
+	'.{class:submitPanel} { width: 100%; background-color: #f0f0f0; min-height: 90px; border: 1px solid #d5d5d5; }' +
+	'.{class:submitHead} { width: 35%; float: left; margin: 10px; color: #515151; font-family: "Helvetica Neue", Helvetica, Arial, sans-serif; }' +
+	'.{class:submitPanel} > .{class:submitButton} { float:right; margin: 55px 10px 0px 0px; }' +
+	'.{class:submitHeadBrand} { font-size: 21px; line-height: 35px; }' +
+	'.{class:submitHeadText} { font-size: 14px; line-height: 20px; }';
 
 Echo.App.create(gallery);
 
