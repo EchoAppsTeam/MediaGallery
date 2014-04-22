@@ -72,8 +72,13 @@ module.exports = function(grunt) {
 				"dest": "<%= dirs.build %>/"
 			},
 			"third-party": {
-				"src": "third-party/*.js",
-				"dest": "<%= dirs.build %>/"
+				"expand": true,
+				"src": "**",
+				"cwd": "third-party/" + (shared.config("env") === "development" ? "dev/" : "prod/"),
+				"dest": "<%= dirs.build %>/third-party/",
+				"flatten": true,
+				"filter": "isFile"
+
 			},
 			"images": {
 				"src": "<%= sources.images %>",
@@ -129,6 +134,20 @@ module.exports = function(grunt) {
 					"cwd": "<%= dirs.build %>",
 					"src": "<%= sources.js %>",
 					"dest": "<%= dirs.build %>"
+				}]
+			}
+		},
+		"patch": {
+			"isotope": {
+				"options": {
+					"patcher": function(text) {
+						return (shared.config("env") === "development"
+							? text.replace(/window.jQuery/g, "Echo.jQuery")
+							: text.replace(/t.jQuery/g, "Echo.jQuery"));
+					}
+				},
+				"files": [{
+					"src": ["<%= dirs.build %>/third-party/isotope.pkgd.js"]
 				}]
 			}
 		},

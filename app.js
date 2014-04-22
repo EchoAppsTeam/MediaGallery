@@ -19,11 +19,8 @@ gallery.config = {
 };
 
 gallery.dependencies = [{
-	"url": "//cdn.echoenabled.com/apps/echo/conversations/v1.3/app.js",
+	"url": "//echoplatform.com/sandbox/staging/apps/echo/conversations/v1.4/app.js",
 	"app": "Echo.Apps.Conversations"
-}, {
-	"url": "{config:cdnBaseURL.sdk}/streamserver.pack.js",
-	"app": "Echo.StreamServer.Controls.Stream"
 }];
 
 gallery.templates.main =
@@ -47,6 +44,16 @@ gallery.renderers.content = function(element) {
 			"postComposer": {
 				"visible": false
 			},
+			"replyComposer": {
+				"contentTypes": {
+					"comments": {
+						"enabled": false
+					},
+					"links": {
+						"enabled": false
+					}
+				}
+			},
 			"topPosts": {
 				"visible": false
 			},
@@ -61,12 +68,15 @@ gallery.renderers.content = function(element) {
 						"maxCardWidth": this.config.get("presentation.maxCardWidth")
 					}
 				}, {
-					"name": "PinboardVisualization",
+					"name": "MediaCardCollection",
 					"presentation": {
 						"maxCardWidth": this.config.get("presentation.maxCardWidth"),
 						"layoutMode": this.config.get("presentation.layoutMode")
 					}
 				}]
+			},
+			"auth": {
+				"allowAnonymousSubmission": true
 			},
 			"dependencies": this.config.get("dependencies")
 		})

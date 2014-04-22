@@ -1,7 +1,9 @@
 (function(jQuery) {
 "use strict";
 
-var plugin = Echo.Plugin.manifest("PinboardVisualization", "Echo.StreamServer.Controls.Stream");
+var $ = jQuery;
+
+var plugin = Echo.Plugin.manifest("MediaCardCollection", "Echo.StreamServer.Controls.CardCollection");
 
 if (Echo.Plugin.isDefined(plugin)) return;
 
@@ -50,21 +52,25 @@ plugin.enabled = function() {
 };
 
 plugin.dependencies = [{
-	"loaded": function() { return !!Echo.jQuery().isotope; },
-	"url": "{config:baseURL.sdk}/third-party/jquery/jquery.isotope.min.js"
+	"loaded": function() {
+		return !!Echo.jQuery().isotope;
+	},
+	"url": "{%= baseURLs.prod %}/third-party/isotope.pkgd.js"
 }];
 
-plugin.events = {
-	"Echo.StreamServer.Controls.Stream.onRender": function(topic, args) {
+(function() {
+	var eventsToRefresh = [
+		"Echo.StreamServer.Controls.CardCollection.onRender",
+		"Echo.StreamServer.Controls.CardCollection.onRefresh",
+		"Echo.StreamServer.Controls.Card.Plugins.MediaCard.onChangeView"
+	];
+	var refreshViewCallback = function(topic, args) {
 		this._refreshView();
-	},
-	"Echo.StreamServer.Controls.Stream.onRefresh": function(topic, args) {
-		this._refreshView();
-	},
-	"Echo.StreamServer.Controls.Stream.Item.Plugins.MediaCard.onChangeView": function(topic, args) {
-		this._refreshView();
-	}
-};
+	};
+	$.map(eventsToRefresh, function(eventName) {
+		plugin.events[eventName] = refreshViewCallback;
+	});
+})();
 
 plugin.methods._refreshView = function() {
 	var plugin = this, stream = this.component;

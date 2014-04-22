@@ -19,6 +19,7 @@ module.exports = function(grunt) {
 			case "dev":
 				tasks = [
 					"copy:third-party",
+					"patch:isotope",
 					"copy:js",
 					"concat"
 				];
@@ -26,6 +27,7 @@ module.exports = function(grunt) {
 			case "min":
 				tasks = [
 					"copy:third-party",
+					"patch:isotope",
 					"copy:js",
 					"uglify",
 					"concat"
