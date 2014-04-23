@@ -12,14 +12,23 @@ plugin.init = function() {
 };
 
 plugin.component.renderers.content = function(element) {
+	var item = this.component;
 	if (this.config.get("presentation.streamlineMode")) {
-		this.component.view.get("wrapper").addClass("flip-container");
-		var subwrapper = this.component.view.get("subwrapper").addClass("flipper");
+		item.view.get("wrapper").addClass("flip-container");
+		var subwrapper = item.view.get("subwrapper").addClass("flipper");
 		var front = $("<div class='front'>").append(subwrapper.children(".echo-streamserver-controls-card-plugin-PhotoCard-item"));
 		var back = $("<div class='back'>").append(subwrapper.children(":not(.echo-streamserver-controls-card-plugin-PhotoCard-item)"));
 		subwrapper.empty().append(front).append(back);
 	}
-	this.component.parentRenderer("content", arguments);
+
+	if (this.config.get("presentation.hideMediaItemsLabel")) {
+		var photoLabel = item.view.get("plugin-PhotoCard-photoLabelContainer");
+		var videoLabel = item.view.get("plugin-VideoCard-label");
+		photoLabel && photoLabel.hide();
+		videoLabel && videoLabel.hide();
+	}
+
+	item.parentRenderer("content", arguments);
 	return element;
 };
 
@@ -27,7 +36,7 @@ plugin.component.renderers.content = function(element) {
 
 	var eventsToRefresh = [
 		"Echo.StreamServer.Controls.Card.onRender",
-		"Echo.Conversations.NestedCard.onMediaLoad",
+		"Echo.StreamServer.Controls.Card.Plugins.PhotoCard.onMediaLoad",
 		"Echo.StreamServer.Controls.CardComposer.onCollapse",
 		"Echo.StreamServer.Controls.CardComposer.onExpand",
 		"Echo.StreamServer.Controls.CardComposer.onRender",
@@ -38,10 +47,19 @@ plugin.component.renderers.content = function(element) {
 		"Echo.StreamServer.Controls.Card.onChildrenExpand"
 	];
 
+	var timeout;
+
 	var publishingCallback = function(topic, args) {
-		this.events.publish({
-			"topic": "onChangeView"
-		});
+		var self = this;
+
+		if (timeout) {
+			clearTimeout(timeout);
+		}
+		timeout = setTimeout(function() {
+			self.events.publish({
+				"topic": "onChangeView"
+			});
+		}, 50);
 	};
 
 	$.map(eventsToRefresh, function(eventName) {

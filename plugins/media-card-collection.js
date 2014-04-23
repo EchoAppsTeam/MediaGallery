@@ -59,6 +59,7 @@ plugin.dependencies = [{
 	var eventsToRefresh = [
 		"Echo.StreamServer.Controls.CardCollection.onRender",
 		"Echo.StreamServer.Controls.CardCollection.onRefresh",
+		"Echo.StreamServer.Controls.CardCollection.onItemsRenderingComplete",
 		"Echo.StreamServer.Controls.Card.Plugins.MediaCard.onChangeView"
 	];
 	var refreshViewCallback = function(topic, args) {

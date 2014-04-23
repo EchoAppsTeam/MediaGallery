@@ -99,8 +99,17 @@ dashboard.config.ecl = [{
 		"type": "boolean",
 		"default": false,
 		"config": {
-			"title": "Enable Streamline mode",
+			"title": "Enable Streamline mode (Coming soon...)",
 			"desc": "If enabled, will display pure media contents with additional info on the back of it"
+		}
+	}, {
+		"component": "Checkbox",
+		"name": "hideMediaItemsLabel",
+		"type": "boolean",
+		"default": false,
+		"config": {
+			"title": "Disables media items labels",
+			"desc": "If enabled, media items description and label will be hidden"
 		}
 	}]
 }, {
