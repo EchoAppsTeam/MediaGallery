@@ -6,6 +6,7 @@ if (Echo.App.isDefined("Echo.Apps.MediaGallery")) return;
 var gallery = Echo.App.manifest("Echo.Apps.MediaGallery");
 
 gallery.config = {
+	"refreshOnUserInvalidate": false,
 	"targetURL": undefined,
 	"nativeSubmissions": true,
 	"presentation": {
