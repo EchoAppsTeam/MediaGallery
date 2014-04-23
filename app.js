@@ -39,12 +39,6 @@ gallery.templates.main =
 		'<div class="{class:content}"></div>' +
 	'</div>';
 
-gallery.init = function() {
-	this._removeUserInvalidationFrom(this);
-	this.render();
-	this.ready();
-};
-
 gallery.renderers.content = function(element) {
 	this.initComponent({
 		"id": "Conversations",
@@ -101,23 +95,6 @@ gallery.renderers.content = function(element) {
 		})
 	});
 	return element;
-};
-
-// removing "Echo.UserSession.onInvalidate" subscription from an app
-// to avoid double-handling of the same evernt (by Canvas and by the widget itself)
-gallery.methods._removeUserInvalidationFrom = function() {
-	var topic = "Echo.UserSession.onInvalidate";
-	$.map(Array.prototype.slice.call(arguments), function(inst) {
-		$.each(inst.subscriptionIDs, function(id) {
-			var obj = $.grep(Echo.Events._subscriptions[topic].global.handlers, function(o) {
-				return o.id === id;
-			})[0];
-			if (obj && obj.id) {
-				Echo.Events.unsubscribe({"handlerId": obj.id});
-				return false;
-			}
-		});
-	});
 };
 
 Echo.App.create(gallery);
