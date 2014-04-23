@@ -18,8 +18,15 @@
         "script": "{%=baseURLs.prod%}/dashboard.js",
         "component": "Echo.Apps.MediaGallery.Dashboard",
         "config": {
-           "instanceManager": {
-               "instance": {"useLoadingIcon": true}
+            "instanceManager": {
+                "instance": {"useLoadingIcon": true},
+                "preview": {
+                    "dimensions": {
+                        "width": 60,
+                        "maxWidth": 70,
+                        "minWidth": 40
+                    }
+                }
             },
             "appkeys": "{data:apps.streamserver.appkeys}",
             "janrainapps": "{data:apps.janrain.apps}",
