@@ -14,7 +14,7 @@ plugin.init = function() {
 //TODO: rewrite it in correct way asap (before release)
 plugin.component.renderers.content = function(element) {
 	var item = this.component;
-	var itemType = item.visualizer.id;
+	var itemType = item.visualizer ? item.visualizer.id : "comment";
 	var layoutMode = this.config.get("presentation.mediaLayoutMode");
 
 	if (layoutMode === "compact") {

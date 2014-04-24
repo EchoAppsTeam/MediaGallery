@@ -216,11 +216,7 @@ dashboard.config.ecl = [{
 			"disableSettings": ["targetURL", "dependencies"]
 		}
 	},
-	"items": [{
-		"replyComposer": {
-			"visible": false
-		}
-	}]
+	"items": []
 }];
 
 dashboard.config.normalizer = {
@@ -245,6 +241,7 @@ dashboard.init = function() {
 	this._fetchDataServerToken(function() {
 		self.config.set("ecl", self._prepareECL(self.config.get("ecl")));
 		parent();
+		console.log("configurator", this);
 	});
 };
 
