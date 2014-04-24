@@ -8,12 +8,16 @@ var gallery = Echo.App.manifest("Echo.Apps.MediaGallery");
 gallery.config = {
 	"refreshOnUserInvalidate": false,
 	"targetURL": undefined,
-	"nativeSubmissions": true,
+	"nativeSubmissions": {
+		"visible": true,
+		"title": "Participate in our amazing video wall",
+		"description": "Tweet, Instagram, or Facebook with #awesome tag or submit your photos right on the page!",
+		"buttonText": "Submit your media"
+	},
 	"presentation": {
 		"maxCardWidth": 250,
-		"layoutMode": "masonry",
-		"streamlineMode": false,
-		"hideMediaItemsLabel": false
+		"isotopeLayoutMode": "masonry",
+		"mediaLayoutMode": "full"
 	},
 	"dependencies": {
 		"FilePicker": {"apiKey": undefined},
@@ -21,7 +25,15 @@ gallery.config = {
 		"Janrain": {"appId": undefined},
 		"StreamServer": {"appkey": undefined}
 	},
-	"advanced": {}
+	"advanced": {
+		"replyComposer": {
+			"visible": true,
+			"contentTypes": {
+				"photos": { "enabled": false },
+				"links": { "enabled": false }
+			}
+		}
+	}
 };
 
 gallery.dependencies = [{
@@ -47,22 +59,35 @@ gallery.renderers.content = function(element) {
 			"target": element,
 			"targetURL": this.config.get("targetURL"),
 			"postComposer": {
-				"visible": this.config.get("nativeSubmissions")
-			},
-			"replyComposer": {
-				"visible": !this.config.get("presentation.streamlineMode"),
+				"visible": this.config.get("nativeSubmissions.visible"),
+				// FIXME: contentTypes are added to set photoComposer as default one.
+				// we need such ability in Conversations app (as a parameter, imho).
 				"contentTypes": {
+					"photos": {
+						"renderer": "PhotoCard",
+						"enabled": true,
+						"sources": "COMPUTER, IMAGE_SEARCH, INSTAGRAM, PICASA, FLICKR, FACEBOOK, DROPBOX, URL, WEBCAM"
+					},
 					"comments": {
-						"enabled": false
+						"renderer": "CommentCard",
+						"enabled": true,
+						"resolveURLs": true,
+						"attachments": {
+							"visible": false,
+							"sources": "COMPUTER, IMAGE_SEARCH, INSTAGRAM, PICASA, FLICKR, FACEBOOK, DROPBOX, URL, WEBCAM"
+						}
 					},
 					"links": {
-						"enabled": false
+						"renderer": "LinkCard",
+						"enabled": true,
+						"blockedDomains": []
 					}
 				}
 			},
-			"topPosts": {
-				"visible": false
+			"replyComposer": {
+				"visible": (this.config.get("presentation.mediaLayoutMode") !== "pure" && this.config.get("advanced.replyComposer.visible"))
 			},
+			"topPosts": { "visible": false },
 			"allPosts": {
 				"asyncItemsRendering": false,
 				"displayCounter": false,
@@ -72,16 +97,17 @@ gallery.renderers.content = function(element) {
 					"name": "MediaCard",
 					"presentation": {
 						"maxCardWidth": this.config.get("presentation.maxCardWidth"),
-						"streamlineMode": this.config.get("presentation.streamlineMode"),
-						"hideMediaItemsLabel": this.config.get("presentation.hideMediaItemsLabel")
+						"mediaLayoutMode": this.config.get("presentation.mediaLayoutMode")
 					}
 				}, {
 					"name": "MediaCardCollection",
 					"presentation": {
 						"maxCardWidth": this.config.get("presentation.maxCardWidth"),
-						"layoutMode": this.config.get("presentation.layoutMode")
+						"isotopeLayoutMode": this.config.get("presentation.isotopeLayoutMode")
 					}
 				}, {
+					// FIXME: this plugin contains changes, that should be delivered into conversations asap
+					// there is added onMediaLoad event (into photoThumbnail.load(...) function)
 					"name": "PhotoCard"
 				}]
 			},
@@ -89,7 +115,8 @@ gallery.renderers.content = function(element) {
 				"allowAnonymousSubmission": true
 			},
 			"plugins": [{
-				"name": "ModalComposer"
+				"name": "ModalComposer",
+				"nativeSubmissions": this.config.get("nativeSubmissions")
 			}],
 			"dependencies": this.config.get("dependencies")
 		})
