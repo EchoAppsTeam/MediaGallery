@@ -32,7 +32,7 @@ plugin.config = {
 };
 
 plugin.init = function() {
-	var layoutMode = this.config.get("presentation.layoutMode") || "masonry";
+	var isotopeLayoutMode = this.config.get("presentation.isotopeLayoutMode");
 	var itemWidth = this.config.get("presentation.maxCardWidth");
 	// TODO: reimplement margin definition for items to make free space by vertical the same as
 	// the horisontal one.
@@ -40,8 +40,8 @@ plugin.init = function() {
 
 	this.component.config.set("slideTimeout", 0);
 
-	this.config.set("isotope.layoutMode", layoutMode);
-	this.config.set("isotope." + layoutMode + ".columnWidth", itemWidth + itemMargin);
+	this.config.set("isotope.layoutMode", isotopeLayoutMode);
+	this.config.set("isotope." + isotopeLayoutMode + ".columnWidth", itemWidth + itemMargin);
 };
 
 plugin.enabled = function() {
@@ -78,9 +78,7 @@ plugin.methods._refreshView = function() {
 		? (hasEntries
 			? body.isotope("reloadItems").isotope({"sortBy": "original-order"})
 			: body.isotope("destroy"))
-		: hasEntries && body.isotope(
-			plugin.config.get("isotope")
-		);
+		: hasEntries && body.isotope(plugin.config.get("isotope"));
 };
 
 plugin.css =
