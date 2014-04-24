@@ -2,10 +2,10 @@
 	"version": 2,
 	"manifest": {
 		"id": "echo-media-gallery-30-dev",
-		"name": "Media Gallery 3.0 (Dev)"
+		"name": "Media Gallery {%=packageVersions.latest%}.0 (Beta)"
 	},
 	"baseURLs": {
-		"dev": "//echoplatform.com/sandbox/staging/apps/echo/media-gallery/v{%=packageVersions.stable%}/dev",
-		"prod": "//echoplatform.com/sandbox/staging/apps/echo/media-gallery/v{%=packageVersions.stable%}"
+		"dev": "//echoplatform.com/sandbox/staging/apps/echo/media-gallery/v{%=packageVersions.latest%}/dev",
+		"prod": "//echoplatform.com/sandbox/staging/apps/echo/media-gallery/v{%=packageVersions.latest%}"
 	}
 }
