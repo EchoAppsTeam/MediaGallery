@@ -241,7 +241,6 @@ dashboard.init = function() {
 	this._fetchDataServerToken(function() {
 		self.config.set("ecl", self._prepareECL(self.config.get("ecl")));
 		parent();
-		console.log("configurator", this);
 	});
 };
 
