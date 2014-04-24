@@ -48,14 +48,52 @@ dashboard.config.ecl = [{
 		}
 	}
 }, {
-	"component": "Checkbox",
+	"component": "Group",
 	"name": "nativeSubmissions",
-	"type": "boolean",
-	"default": true,
+	"type": "object",
 	"config": {
-		"title": "Enable native submissions",
-		"desc": "If enabled, users will have an ability to post their own media"
-	}
+		"title": "Native Submissions"
+	},
+	"items":[{
+		"component": "Checkbox",
+		"name": "visible",
+		"type": "boolean",
+		"default": true,
+		"config": {
+			"title": "Allow Native Submissions",
+			"desc": "If True, users are provided the opportunity to upload photos and videos directly on the page"
+		}
+	}, {
+		"component": "Input",
+		"name": "title",
+		"type": "string",
+		"config": {
+			"title": "Submission panel title",
+			"desc": "Specify a title for native submissions panel.",
+			"options": [],
+			"data": {"sample": "Participate in our amazing video wall"}
+		}
+	}, {
+		"component": "Input",
+		"name": "description",
+		"type": "string",
+		"config": {
+			"title": "Submission panel description",
+			"desc": "Specify a description for native submissions panel.",
+			"options": [],
+			"data": {"sample": "Tweet, Instagram, or Facebook with #awesome tag or submit your photos right on the page!"}
+		}
+	}, {
+		"component": "Input",
+		"name": "buttonText",
+		"type": "string",
+		"config": {
+			"title": "Submit button text",
+			"desc": "Specify a text for submit button.",
+			"options": [],
+			"data": {"sample": "Submit your media"}
+		}
+	}]
 }, {
 	"component": "Group",
 	"name": "presentation",
@@ -75,11 +113,11 @@ dashboard.config.ecl = [{
 		}
 	}, {
 		"component": "Select",
-		"name": "layoutMode",
+		"name": "isotopeLayoutMode",
 		"type": "string",
 		"default": "masonry",
 		"config": {
-			"title": "Media Cards layout mode",
+			"title": "Isotope layout mode",
 			"desc": "",
 			"options": [{
 				"title": "Masonry",
@@ -94,22 +132,24 @@ dashboard.config.ecl = [{
 			"data": {}
 		}
 	}, {
-		"component": "Checkbox",
-		"name": "streamlineMode",
-		"type": "boolean",
-		"default": false,
+		"component": "Select",
+		"name": "mediaLayoutMode",
+		"type": "string",
+		"default": "full",
 		"config": {
-			"title": "Enable Streamline mode (Coming soon...)",
-			"desc": "If enabled, will display pure media contents with additional info on the back of it"
-		}
-	}, {
-		"component": "Checkbox",
-		"name": "hideMediaItemsLabel",
-		"type": "boolean",
-		"default": false,
-		"config": {
-			"title": "Disables media items labels",
-			"desc": "If enabled, media items description and label will be hidden"
+			"title": "Media Cards layout mode",
+			"desc": "",
+			"options": [{
+				"title": "Full",
+				"value": "full"
+			}, {
+				"title": "Compact",
+				"value": "compact"
+			}, {
+				"title": "pure",
+				"value": "pure"
+			}],
+			"data": {}
 		}
 	}]
 }, {
@@ -137,7 +177,33 @@ dashboard.config.ecl = [{
 			"validators": ["required"],
 			"options": []
 		}
-	}]
+	}, {
+			"component": "Fieldset",
+			"name": "FilePicker",
+			"type": "object",
+			"items": [{
+				"component": "Input",
+				"name": "apiKey",
+				"type": "string",
+				"config": {
+					"title": "FilePicker API key",
+					"desc": "Specifies the Filepicker api key for this instance",
+					"options": []
+				}
+			}]
+		}, {
+			"component": "Fieldset",
+			"name": "embedly",
+			"type": "object",
+			"items": [{
+				"component": "Input",
+				"name": "apiKey",
+				"type": "string",
+				"config": {
+					"title": "Embed.ly API Key"
+				}
+			}]
+		}]
 }, {
 	"component": "Dashboard",
 	"name": "advanced",
@@ -145,12 +211,16 @@ dashboard.config.ecl = [{
 	"config": {
 		"title": "Advanced",
 		"component": "Echo.Apps.Conversations.Dashboard",
-		"url": "http://cdn.echoenabled.com/apps/echo/conversations/v1.3/dashboard.js",
+		"url": "//cdn.echoenabled.com/apps/echo/conversations/v2/dashboard.js",
 		"config": {
 			"disableSettings": ["targetURL", "dependencies"]
 		}
 	},
-	"items": []
+	"items": [{
+		"replyComposer": {
+			"visible": false
+		}
+	}]
 }];
 
 dashboard.config.normalizer = {
@@ -189,6 +259,12 @@ dashboard.methods.declareInitialConfig = function() {
 			},
 			"StreamServer": {
 				"appkey": keys.length ? keys[0].key : undefined
+			},
+			"FilePicker": {
+				"apiKey": "AFLWUBllDRwWZl7sQO1V1z"
+			},
+			"embedly": {
+				"apiKey": "5945901611864679a8761b0fcaa56f87"
 			}
 		}
 	};
