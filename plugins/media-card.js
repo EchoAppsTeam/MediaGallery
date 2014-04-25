@@ -8,30 +8,35 @@ var plugin = Echo.Plugin.manifest("MediaCard", "Echo.StreamServer.Controls.Card"
 if (Echo.Plugin.isDefined(plugin)) return;
 
 plugin.init = function() {
-	Echo.Utils.addCSS('.' + this.cssClass + ' {max-width:' + this.config.get("presentation.maxCardWidth") + 'px; }');
+	var cssClass = '.' + this.cssClass;
+	Echo.Utils.addCSS(cssClass + ' { width:' + this.config.get("presentation.maxCardWidth") + 'px; }', cssClass);
 };
 
-//TODO: rewrite it in correct way asap (before release)
 plugin.component.renderers.content = function(element) {
 	var item = this.component;
 	var itemType = item.visualizer ? item.visualizer.id : "comment";
 	var layoutMode = this.config.get("presentation.mediaLayoutMode");
 
 	if (layoutMode === "compact") {
-		var photoLabel = item.view.get("plugin-PhotoCard-photoLabelContainer");
-		var videoLabel = item.view.get("plugin-VideoCard-label");
-		photoLabel && photoLabel.hide();
-		videoLabel && videoLabel.hide();
-		item.parentRenderer("content", arguments);
+		var label = itemType === "photo"
+			? item.view.get("plugin-PhotoCard-photoLabelContainer")
+			: itemType === "video"
+				? item.view.get("plugin-VideoCard-label")
+				: undefined;
+
+		label && label.hide();
 	} else if (layoutMode === "pure") {
-		if (itemType === "photo") {
-			element.empty().append(item.view.get("plugin-PhotoCard-photoThumbnail"));
-		} else {
-			element.empty().append(item.view.get("plugin-VideoCard-video"));
-		}
-	} else {
-		item.parentRenderer("content", arguments);
+		var media = itemType === "photo"
+			? item.view.get("plugin-PhotoCard-photoThumbnail")
+			: itemType === "video"
+				? item.view.get("plugin-VideoCard-video")
+				: undefined;
+
+		return media
+			? element.empty().append(media)
+			: item.parentRenderer("content", arguments);
 	}
+	item.parentRenderer("content", arguments);
 	return element;
 };
 
@@ -58,7 +63,8 @@ plugin.component.renderers.content = function(element) {
 			clearTimeout(timeout);
 		}
 
-		//this timeout is used to reduce isotope rendering number
+		// this timeout is used to reduce isotope renderings
+		// number by suppressing generating rival events
 		timeout = setTimeout(function() {
 			self.events.publish({
 				"topic": "onChangeView"
