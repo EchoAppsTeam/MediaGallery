@@ -26,6 +26,16 @@ gallery.config = {
 		"StreamServer": {"appkey": undefined}
 	},
 	"advanced": {
+		"topPosts": { "visible": false },
+		"allPosts": {
+			"asyncItemsRendering": false,
+			"displayCounter": false,
+			"initialIntentsDisplayMode": "compact",
+			"replyNestingLevels": 1
+		},
+		"auth": {
+			"allowAnonymousSubmission": true
+		},
 		"replyComposer": {
 			"visible": false,
 			"contentTypes": {
@@ -71,12 +81,7 @@ gallery.renderers.content = function(element) {
 			"replyComposer": {
 				"visible": (this.config.get("presentation.mediaLayoutMode") !== "pure" && this.config.get("advanced.replyComposer.visible"))
 			},
-			"topPosts": { "visible": false },
 			"allPosts": {
-				"asyncItemsRendering": false,
-				"displayCounter": false,
-				"initialIntentsDisplayMode": "compact",
-				"replyNestingLevels": 1,
 				"plugins": [{
 					"name": "MediaCard",
 					"presentation": this.config.get("presentation")
@@ -88,9 +93,6 @@ gallery.renderers.content = function(element) {
 					// there is onMediaLoad event added (into photoThumbnail.load(...) function)
 					"name": "PhotoCard"
 				}]
-			},
-			"auth": {
-				"allowAnonymousSubmission": true
 			},
 			"plugins": [{
 				"name": "ModalComposer",
