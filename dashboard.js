@@ -11,6 +11,25 @@ dashboard.labels = {
 	"failedToFetchToken": "Failed to fetch customer dataserver token: {reason}"
 };
 
+dashboard.vars = {
+	"nestedOverrides": {
+		"original": {
+			"advanced": {
+				"replyComposer": {
+					"visible": true
+				}
+			}
+		},
+		"custom": {
+			"advanced": {
+				"replyComposer": {
+					"visible": false
+				}
+			}
+		}
+	}
+};
+
 dashboard.mappings = {
 	"dependencies.appkey": {
 		"key": "dependencies.StreamServer.appkey"
@@ -226,7 +245,11 @@ dashboard.config.normalizer = {
 			if (field.name === "advanced") {
 				field.config = $.extend(true, field.config, {
 					"config": {
-						"data": self.get("data"),
+						"data": $.extend(true, {
+							"instance": {
+								"config": component.get("nestedOverrides.custom")
+							}
+						}, self.get("data")),
 						"request": self.get("request")
 					}
 				});
@@ -247,7 +270,7 @@ dashboard.init = function() {
 dashboard.methods.declareInitialConfig = function() {
 	var keys = this.config.get("appkeys", []);
 	var apps = this.config.get("janrainapps", []);
-	return {
+	return $.extend(true, {
 		"targetURL": this._assembleTargetURL(),
 		"dependencies": {
 			"Janrain": {
@@ -263,7 +286,11 @@ dashboard.methods.declareInitialConfig = function() {
 				"apiKey": "5945901611864679a8761b0fcaa56f87"
 			}
 		}
-	};
+	}, this.get("nestedOverrides.custom"));
+};
+
+dashboard.methods.declareConfigOverrides = function() {
+	return $.extend(true, this.parent(), this.get("nestedOverrides.original"));
 };
 
 dashboard.methods._prepareECL = function(items) {
