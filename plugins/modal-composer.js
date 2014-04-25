@@ -36,6 +36,8 @@ plugin.component.renderers.postComposer = function(element) {
 			"body": element
 		}
 	});
+	// this variable is a flag to prevent modal window
+	// opening on initial plugin loading (we are to do it on click)
 	this.set("composerRendered", true);
 };
 
