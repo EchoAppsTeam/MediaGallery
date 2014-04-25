@@ -27,7 +27,7 @@ gallery.config = {
 	},
 	"advanced": {
 		"replyComposer": {
-			"visible": true,
+			"visible": false,
 			"contentTypes": {
 				"photos": { "enabled": false },
 				"links": { "enabled": false }
@@ -63,25 +63,9 @@ gallery.renderers.content = function(element) {
 				// FIXME: contentTypes are added to set photoComposer as default one.
 				// we need such ability in Conversations app (as a parameter, imho).
 				"contentTypes": {
-					"photos": {
-						"renderer": "PhotoCard",
-						"enabled": true,
-						"sources": "COMPUTER, IMAGE_SEARCH, INSTAGRAM, PICASA, FLICKR, FACEBOOK, DROPBOX, URL, WEBCAM"
-					},
-					"comments": {
-						"renderer": "CommentCard",
-						"enabled": true,
-						"resolveURLs": true,
-						"attachments": {
-							"visible": false,
-							"sources": "COMPUTER, IMAGE_SEARCH, INSTAGRAM, PICASA, FLICKR, FACEBOOK, DROPBOX, URL, WEBCAM"
-						}
-					},
-					"links": {
-						"renderer": "LinkCard",
-						"enabled": true,
-						"blockedDomains": []
-					}
+					"photos": {},
+					"comments": {},
+					"links": {}
 				}
 			},
 			"replyComposer": {
@@ -95,19 +79,13 @@ gallery.renderers.content = function(element) {
 				"replyNestingLevels": 1,
 				"plugins": [{
 					"name": "MediaCard",
-					"presentation": {
-						"maxCardWidth": this.config.get("presentation.maxCardWidth"),
-						"mediaLayoutMode": this.config.get("presentation.mediaLayoutMode")
-					}
+					"presentation": this.config.get("presentation")
 				}, {
 					"name": "MediaCardCollection",
-					"presentation": {
-						"maxCardWidth": this.config.get("presentation.maxCardWidth"),
-						"isotopeLayoutMode": this.config.get("presentation.isotopeLayoutMode")
-					}
+					"presentation": this.config.get("presentation")
 				}, {
 					// FIXME: this plugin contains changes, that should be delivered into conversations asap
-					// there is added onMediaLoad event (into photoThumbnail.load(...) function)
+					// there is onMediaLoad event added (into photoThumbnail.load(...) function)
 					"name": "PhotoCard"
 				}]
 			},
