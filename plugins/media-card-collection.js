@@ -28,20 +28,18 @@ plugin.config = {
 		},
 		"layoutMode": undefined,
 		"animationEngine": isMozillaBrowser ? "jquery" : "best-available"
-	}
-};
+	},
+	"cardBottomMargin": 10 // we need this value (currently 10px) to calculate proper columns width,
+};							// and keep margin value at X and Y axis similar
 
 plugin.init = function() {
 	var isotopeLayoutMode = this.config.get("presentation.isotopeLayoutMode");
-	var itemWidth = this.config.get("presentation.maxCardWidth");
-	// TODO: reimplement margin definition for items to make free space by vertical the same as
-	// the horisontal one.
-	var itemMargin = 10; // this is margin-bottom of current items visualization.
-
 	this.component.config.set("slideTimeout", 0);
-
 	this.config.set("isotope.layoutMode", isotopeLayoutMode);
-	this.config.set("isotope." + isotopeLayoutMode + ".columnWidth", itemWidth + itemMargin);
+	if (isotopeLayoutMode === "masonry") {
+		var columnWidth = this.config.get("presentation.maxCardWidth") + this.config.get ("cardBottomMargin");
+		this.config.set("isotope." + isotopeLayoutMode + ".columnWidth", columnWidth);
+	}
 };
 
 plugin.enabled = function() {
