@@ -2,7 +2,9 @@
 
 [![Built with Grunt](https://cdn.gruntjs.com/builtwith.png)](http://gruntjs.com/)
 
-Echo MediaGallery description goes here...
+Media Gallery allows you to create real-time collections of user-generated photos and videos. Media can be collected from Social Sources and/or directly submitted on the page.
+Users can browse for personal media from their local hard drives or import directly from their favorite media services such as Facebook, Flickr, Picasa or Instagram.
+
 
 # Installation instructions
 
@@ -22,7 +24,7 @@ http://www.apache.org/licenses/LICENSE-2.0
 
 Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the specific language governing permissions and limitations under the License.
 
-# Demo (under construction)
+# Demo
 
 You can see the demo page of Echo MediaGallery  app [here](http://echoappsteam.github.io/MediaGallery/).
 
