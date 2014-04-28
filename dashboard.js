@@ -136,7 +136,7 @@ dashboard.config.ecl = [{
 		"type": "string",
 		"default": "masonry",
 		"config": {
-			"title": "Isotope layout mode",
+			"title": "Stream layout",
 			"desc": "",
 			"options": [{
 				"title": "Masonry",
@@ -156,7 +156,7 @@ dashboard.config.ecl = [{
 		"type": "string",
 		"default": "full",
 		"config": {
-			"title": "Media Cards layout mode",
+			"title": "Media Cards layout",
 			"desc": "",
 			"options": [{
 				"title": "Full",
@@ -165,7 +165,7 @@ dashboard.config.ecl = [{
 				"title": "Compact",
 				"value": "compact"
 			}, {
-				"title": "pure",
+				"title": "Media only",
 				"value": "pure"
 			}],
 			"data": {}
