@@ -31,6 +31,7 @@ gallery.config = {
 			"asyncItemsRendering": false,
 			"displayCounter": false,
 			"initialIntentsDisplayMode": "compact",
+			"slideTimeout": 0,
 			"replyNestingLevels": 1
 		},
 		"auth": {

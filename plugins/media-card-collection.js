@@ -24,7 +24,6 @@ plugin.config = {
 
 plugin.init = function() {
 	var isotopeLayoutMode = this.config.get("presentation.isotopeLayoutMode");
-	this.component.config.set("slideTimeout", 0);
 	this.config.set("isotope.layoutMode", isotopeLayoutMode);
 	if (isotopeLayoutMode === "masonry") {
 		var columnWidth = this.config.get("presentation.maxCardWidth") + this.config.get ("cardBottomMargin");
