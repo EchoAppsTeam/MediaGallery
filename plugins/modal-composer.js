@@ -26,6 +26,7 @@ plugin.component.renderers.postComposer = function(element) {
 	this.component.parentRenderer("postComposer", arguments);
 	new Echo.GUI.Modal({
 		"show": !!this.get("composerRendered"),
+		"extraClass": this.cssClass,
 		"data": {
 			"title": this.labels.get("buttonText"),
 			"body": element
@@ -49,7 +50,7 @@ plugin.renderers.submitButton = function(element) {
 };
 
 plugin.css =
-	'.{class:postComposer} > a.dropdown-toggle { font-family: "Helvetica Neue", Helvetica, Arial, sans-serif; }' +
+	'.{plugin.class} a.dropdown-toggle { font-family: "Helvetica Neue", Helvetica, Arial, sans-serif; }' +
 	'.{plugin.class:submitPanel} { background-color: #f0f0f0; border: 1px solid #d5d5d5; margin-bottom: 15px; }' +
 	'.{plugin.class:submitHead} { max-width: 350px; float: left; margin: 20px 0 20px 20px; color: #515151; font-family: "Helvetica Neue", Helvetica, Arial, sans-serif; }' +
 	'.echo-sdk-ui .{plugin.class:submitPanel} > .{plugin.class:submitButton} { float:right; margin: 65px 20px 10px 0px; }' +
