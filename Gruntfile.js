@@ -143,7 +143,7 @@ module.exports = function(grunt) {
 					"patcher": function(text) {
 						return (shared.config("env") === "development"
 							? text.replace(/window.jQuery/g, "Echo.jQuery")
-							: text.replace(/t.jQuery/g, "Echo.jQuery"));
+							: text.replace(/\w{1,2}\.jQuery/g, "Echo.jQuery"));
 					}
 				},
 				"files": [{

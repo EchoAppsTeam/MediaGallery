@@ -7,17 +7,7 @@ var plugin = Echo.Plugin.manifest("MediaCardCollection", "Echo.StreamServer.Cont
 
 if (Echo.Plugin.isDefined(plugin)) return;
 
-var ua = navigator.userAgent.toLowerCase();
-
-var isMozillaBrowser = !!(
-	!~ua.indexOf("chrome")
-	&& !~ua.indexOf("webkit")
-	&& !~ua.indexOf("opera")
-	&& (
-		/(msie) ([\w.]+)/.exec(ua)
-		|| ua.indexOf("compatible") < 0 && /(mozilla)(?:.*? rv:([\w.]+)|)/.exec(ua)
-	)
-);
+var isMozillaBrowser = 'MozAppearance' in document.documentElement.style;
 
 plugin.config = {
 	"isotope": {
@@ -26,7 +16,7 @@ plugin.config = {
 			"easing": "linear",
 			"queue": false
 		},
-		"layoutMode": undefined,
+		"layoutMode": "masonry",
 		"animationEngine": isMozillaBrowser ? "jquery" : "best-available"
 	},
 	"cardBottomMargin": 10 // we need this value (currently 10px) to calculate proper columns width,
@@ -53,30 +43,31 @@ plugin.dependencies = [{
 	"url": "{%= baseURLs.prod %}/third-party/isotope.pkgd.js"
 }];
 
-(function() {
-	var eventsToRefresh = [
-		"Echo.StreamServer.Controls.CardCollection.onRender",
-		"Echo.StreamServer.Controls.CardCollection.onRefresh",
-		"Echo.StreamServer.Controls.CardCollection.onItemsRenderingComplete",
-		"Echo.StreamServer.Controls.Card.Plugins.MediaCard.onChangeView"
-	];
-	var refreshViewCallback = function(topic, args) {
-		this._refreshView();
-	};
-	$.map(eventsToRefresh, function(eventName) {
-		plugin.events[eventName] = refreshViewCallback;
-	});
-})();
+var refreshViewCallback = function(topic, args) {
+	this._refreshView();
+};
+
+$.map(["Echo.StreamServer.Controls.CardCollection.onRender",
+	"Echo.StreamServer.Controls.CardCollection.onRefresh",
+	"Echo.StreamServer.Controls.CardCollection.onItemsRenderingComplete",
+	"Echo.StreamServer.Controls.Card.Plugins.MediaCard.onChangeView"
+], function(eventName) {
+	plugin.events[eventName] = refreshViewCallback;
+});
 
 plugin.methods._refreshView = function() {
 	var plugin = this, stream = this.component;
 	var body = stream.view.get("body");
 	var hasEntries = stream.threads.length;
-	body.data("isotope")
-		? (hasEntries
-			? body.isotope("reloadItems").isotope({"sortBy": "original-order"})
-			: body.isotope("destroy"))
-		: hasEntries && body.isotope(plugin.config.get("isotope"));
+	if (body.data("isotope")) {
+		if (hasEntries) {
+			body.isotope("reloadItems").isotope({"sortBy": "original-order"});
+		} else {
+			body.isotope("destroy");
+		}
+	} else if (hasEntries) {
+		body.isotope(plugin.config.get("isotope"));
+	}
 };
 
 plugin.css =

@@ -57,9 +57,7 @@ gallery.dependencies = [{
 }];
 
 gallery.templates.main =
-	'<div class="{class:container}">' +
-		'<div class="{class:content}"></div>' +
-	'</div>';
+	'<div class="{class:content}"></div>';
 
 gallery.renderers.content = function(element) {
 	this.initComponent({
@@ -88,10 +86,6 @@ gallery.renderers.content = function(element) {
 				}, {
 					"name": "MediaCardCollection",
 					"presentation": this.config.get("presentation")
-				}, {
-					// FIXME: this plugin contains changes, that should be delivered into conversations asap
-					// there is onMediaLoad event added (into photoThumbnail.load(...) function)
-					"name": "PhotoCard"
 				}]
 			},
 			"plugins": [{

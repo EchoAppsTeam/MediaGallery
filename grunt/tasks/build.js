@@ -43,7 +43,8 @@ module.exports = function(grunt) {
 		}
 		tasks = tasks.concat([
 			"copy:build",
-			"clean:build"
+			"clean:build",
+			"clean:plugins"
 		]);
 		grunt.task.run(tasks);
 	});

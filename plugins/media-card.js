@@ -7,6 +7,13 @@ var plugin = Echo.Plugin.manifest("MediaCard", "Echo.StreamServer.Controls.Card"
 
 if (Echo.Plugin.isDefined(plugin)) return;
 
+plugin.config = {
+	"presentation": {
+		"maxCardWidth": 250,
+		"mediaLayoutMode": "full"
+	}
+};
+
 plugin.init = function() {
 	var cssClass = '.' + this.cssClass;
 	Echo.Utils.addCSS(cssClass + ' { width:' + this.config.get("presentation.maxCardWidth") + 'px; }', cssClass);
@@ -18,13 +25,7 @@ plugin.component.renderers.content = function(element) {
 	var layoutMode = this.config.get("presentation.mediaLayoutMode");
 
 	if (layoutMode === "compact") {
-		var label = itemType === "photo"
-			? item.view.get("plugin-PhotoCard-photoLabelContainer")
-			: itemType === "video"
-				? item.view.get("plugin-VideoCard-label")
-				: undefined;
-
-		label && label.hide();
+		element.addClass(this.cssPrefix + "layoutCompact");
 	} else if (layoutMode === "pure") {
 		var media = itemType === "photo"
 			? item.view.get("plugin-PhotoCard-photoThumbnail")
@@ -40,42 +41,38 @@ plugin.component.renderers.content = function(element) {
 	return element;
 };
 
-(function() {
+var timeout;
 
-	var eventsToRefresh = [
-		"Echo.StreamServer.Controls.Card.onRender",
-		"Echo.StreamServer.Controls.Card.Plugins.PhotoCard.onMediaLoad",
-		"Echo.StreamServer.Controls.CardComposer.onCollapse",
-		"Echo.StreamServer.Controls.CardComposer.onExpand",
-		"Echo.StreamServer.Controls.CardComposer.onRender",
-		"Echo.StreamServer.Controls.CardComposer.onPostComplete",
-		"Echo.StreamServer.Controls.CardComposer.onPostError",
-		"Echo.StreamServer.Controls.Card.onDelete",
-		"Echo.StreamServer.Controls.Card.onAdd",
-		"Echo.StreamServer.Controls.Card.onChildrenExpand"
-	];
+var publishingCallback = function(topic, args) {
+	var self = this;
+	if (timeout) {
+		clearTimeout(timeout);
+	}
+	// this timeout is used to reduce isotope renderings
+	// number by suppressing generating rival events
+	timeout = setTimeout(function() {
+		self.events.publish({
+			"topic": "onChangeView"
+		});
+	}, 50);
+};
 
-	var timeout;
+$.map(["Echo.StreamServer.Controls.Card.onRender",
+	"Echo.StreamServer.Controls.Card.Plugins.PhotoCard.onMediaLoad",
+	"Echo.StreamServer.Controls.CardComposer.onCollapse",
+	"Echo.StreamServer.Controls.CardComposer.onExpand",
+	"Echo.StreamServer.Controls.CardComposer.onRender",
+	"Echo.StreamServer.Controls.CardComposer.onPostComplete",
+	"Echo.StreamServer.Controls.CardComposer.onPostError",
+	"Echo.StreamServer.Controls.Card.onDelete",
+	"Echo.StreamServer.Controls.Card.onAdd",
+	"Echo.StreamServer.Controls.Card.onChildrenExpand"
+], function(eventName) {
+	plugin.events[eventName] = publishingCallback;
+});
 
-	var publishingCallback = function(topic, args) {
-		var self = this;
-		if (timeout) {
-			clearTimeout(timeout);
-		}
-
-		// this timeout is used to reduce isotope renderings
-		// number by suppressing generating rival events
-		timeout = setTimeout(function() {
-			self.events.publish({
-				"topic": "onChangeView"
-			});
-		}, 50);
-	};
-
-	$.map(eventsToRefresh, function(eventName) {
-		plugin.events[eventName] = publishingCallback;
-	});
-})();
+plugin.css =
+	'.{plugin.class:layoutCompact} .echo-streamserver-controls-card-plugin-PhotoCard-photoLabel, .echo-streamserver-controls-card-plugin-VideoCard-label { display: none; }';
 
 Echo.Plugin.create(plugin);
 
