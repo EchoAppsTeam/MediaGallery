@@ -2,7 +2,7 @@
 	"version": 2,
 	"manifest": {
 		"id": "echo-media-gallery-30",
-		"name": "Media Gallery 3.0"
+		"name": "Media Gallery"
 	},
 	"baseURLs": {
 		"dev": "//cdn.echoenabled.com/apps/echo/media-gallery/v{%=packageVersions.stable%}/dev",
