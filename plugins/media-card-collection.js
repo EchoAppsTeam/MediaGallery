@@ -49,7 +49,8 @@ var refreshViewCallback = function(topic, args) {
 $.map(["Echo.StreamServer.Controls.CardCollection.onRender",
 	"Echo.StreamServer.Controls.CardCollection.onRefresh",
 	"Echo.StreamServer.Controls.CardCollection.onItemsRenderingComplete",
-	"Echo.StreamServer.Controls.Card.Plugins.MediaCard.onChangeView"
+	"Echo.StreamServer.Controls.Card.Plugins.MediaCard.onChangeView",
+	"Echo.StreamServer.Controls.CardComposer.Plugins.RepliesTuner.onChangeView"
 ], function(eventName) {
 	plugin.events[eventName] = refreshViewCallback;
 });

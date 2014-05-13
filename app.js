@@ -32,7 +32,11 @@ gallery.config = {
 			"displayCounter": false,
 			"initialIntentsDisplayMode": "compact",
 			"slideTimeout": 0,
-			"replyNestingLevels": 1
+			"replyNestingLevels": 1,
+			"children": {
+				"moreButtonSlideTimeout": 0,
+				"itemsSlideTimeout": 0
+			}
 		},
 		"auth": {
 			"allowAnonymousSubmission": true
@@ -78,6 +82,9 @@ gallery.renderers.content = function(element) {
 				}
 			},
 			"replyComposer": {
+				"plugins": [{
+					"name": "RepliesTuner"
+				}],
 				"visible": (this.config.get("presentation.mediaLayoutMode") !== "pure" && this.config.get("advanced.replyComposer.visible"))
 			},
 			"allPosts": {
