@@ -11,11 +11,13 @@ plugin.config = {
 	"presentation": {
 		"maxCardWidth": 250,
 		"mediaLayoutMode": "full"
-	}
+	},
+	"appTargetClass": "echo-apps-mediagallery"
 };
 
 plugin.init = function() {
-	var cssClass = '.' + this.cssClass;
+	var cssClass = "." + this.config.get("appTargetClass").replace(/\s/g, ".") // it helps to apply css rules to current app instance only
+		+ " ." + this.cssClass;
 	Echo.Utils.addCSS(cssClass + ' { width:' + this.config.get("presentation.maxCardWidth") + 'px; }', cssClass);
 };
 

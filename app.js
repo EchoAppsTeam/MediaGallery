@@ -83,7 +83,8 @@ gallery.renderers.content = function(element) {
 			"allPosts": {
 				"plugins": [{
 					"name": "MediaCard",
-					"presentation": this.config.get("presentation")
+					"presentation": this.config.get("presentation"),
+					"appTargetClass": this.config.get("target").attr("class")
 				}, {
 					"name": "MediaCardCollection",
 					"presentation": this.config.get("presentation")
