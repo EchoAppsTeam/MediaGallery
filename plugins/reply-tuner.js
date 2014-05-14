@@ -8,8 +8,7 @@ if (Echo.Plugin.isDefined(plugin)) return;
 plugin.component.renderers.media = function(element) {
 	var item = this.component;
 	var self = this;
-	var clipButton = item.view.get("clipButton");
-	clipButton.one("click", function(e) {
+	item.view.get("clipButton").one("click", function(e) {
 		self.events.publish({"topic": "onChangeView"});
 	});
 	item.parentRenderer("media", arguments);
