@@ -68,7 +68,9 @@ $.map(["Echo.StreamServer.Controls.Card.onRender",
 	"Echo.StreamServer.Controls.CardComposer.onPostError",
 	"Echo.StreamServer.Controls.Card.onDelete",
 	"Echo.StreamServer.Controls.Card.onAdd",
-	"Echo.StreamServer.Controls.Card.onChildrenExpand"
+	"Echo.StreamServer.Controls.Card.onChildrenExpand",
+	"Echo.StreamServer.Controls.MediaContainer.onAttachmentsPanelShow",
+	"Echo.StreamServer.Controls.MediaContainer.onAttachmentsPanelHide"
 ], function(eventName) {
 	plugin.events[eventName] = publishingCallback;
 });

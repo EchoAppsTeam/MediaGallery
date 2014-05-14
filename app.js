@@ -82,9 +82,6 @@ gallery.renderers.content = function(element) {
 				}
 			},
 			"replyComposer": {
-				"plugins": [{
-					"name": "RepliesTuner"
-				}],
 				"visible": (this.config.get("presentation.mediaLayoutMode") !== "pure" && this.config.get("advanced.replyComposer.visible"))
 			},
 			"allPosts": {
