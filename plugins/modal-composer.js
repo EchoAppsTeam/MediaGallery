@@ -8,11 +8,13 @@ if (Echo.Plugin.isDefined(plugin)) return;
 plugin.templates.submitPanel =
 	'<div class="{plugin.class:submitPanel}">' +
 		'<div class="{plugin.class:submitHead}">' +
-			'<div class="{plugin.class:submitHeadBrand}">{plugin.config:nativeSubmissions.title}</div>' +
-			'<div class="{plugin.class:submitHeadText}">{plugin.config:nativeSubmissions.description}</div>' +
+			'<div class="{plugin.class:submitHeadTitle}">{plugin.config:nativeSubmissions.title}</div>' +
+			'<div class="{plugin.class:submitHeadDescription}">' +
+				'{plugin.config:nativeSubmissions.description}' +
+				'<button class="btn btn-primary pull-right {plugin.class:submitButton}"></button>' +
+				'<div class="echo-clear" />' +
+			'</div>' +
 		'</div>' +
-		'<button class="btn btn-primary {plugin.class:submitButton}"></button>' +
-		'<div class="echo-clear"></div>' +
 		'<div class="{class:postComposer}"></div>' +
 	'</div>';
 
@@ -52,10 +54,9 @@ plugin.renderers.submitButton = function(element) {
 plugin.css =
 	'.{plugin.class} a.dropdown-toggle { font-family: "Helvetica Neue", Helvetica, Arial, sans-serif; }' +
 	'.{plugin.class:submitPanel} { background-color: #f0f0f0; border: 1px solid #d5d5d5; margin-bottom: 15px; }' +
-	'.{plugin.class:submitHead} { max-width: 350px; float: left; margin: 20px 0 20px 20px; color: #515151; font-family: "Helvetica Neue", Helvetica, Arial, sans-serif; }' +
-	'.echo-sdk-ui .{plugin.class:submitPanel} > .{plugin.class:submitButton} { float:right; margin: 65px 20px 10px 0px; }' +
-	'.{plugin.class:submitHeadBrand} { font-size: 21px; line-height: 35px; }' +
-	'.{plugin.class:submitHeadText} { font-size: 14px; line-height: 20px; }';
+	'.{plugin.class:submitHead} { margin: 25px; color: #515151; font-family: "Helvetica Neue", Helvetica, Arial, sans-serif; }' +
+	'.{plugin.class:submitHeadTitle} { font-size: 26px; line-height: 35px; }' +
+	'.{plugin.class:submitHeadDescription} { font-size: 18px; line-height: 30px; }';
 
 Echo.Plugin.create(plugin);
 
