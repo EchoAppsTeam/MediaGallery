@@ -87,7 +87,7 @@ var publishingCallback = function(topic, args) {
 };
 
 $.map(["Echo.StreamServer.Controls.Card.onRender",
-	"Echo.StreamServer.Controls.Card.Plugins.PhotoCard.onMediaLoad",
+	"Echo.StreamServer.Controls.NestedCard.onMediaLoad",
 	"Echo.StreamServer.Controls.CardComposer.onCollapse",
 	"Echo.StreamServer.Controls.CardComposer.onExpand",
 	"Echo.StreamServer.Controls.CardComposer.onRender",
