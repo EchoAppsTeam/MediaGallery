@@ -67,6 +67,10 @@ plugin.methods._refreshView = function() {
 		}
 	} else if (hasEntries) {
 		body.isotope(plugin.config.get("isotope"));
+		body.on("click", ".echo-streamserver-controls-card", function() {
+			$(this).toggleClass("echo-streamserver-controls-card-plugin-MediaCard-preview");
+			body.isotope("layout");
+		});
 	}
 };
 

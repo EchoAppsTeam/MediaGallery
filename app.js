@@ -17,7 +17,7 @@ gallery.config = {
 	"presentation": {
 		"maxCardWidth": 250,
 		"isotopeLayoutMode": "masonry",
-		"mediaLayoutMode": "full"
+		"mediaLayoutMode": "lightbox"
 	},
 	"dependencies": {
 		"FilePicker": {"apiKey": undefined},
@@ -86,13 +86,15 @@ gallery.renderers.content = function(element) {
 			},
 			"allPosts": {
 				"plugins": [{
+					"name": "LightBox"
+				}, {
 					"name": "MediaCard",
 					"presentation": this.config.get("presentation"),
 					"appTargetClass": this.config.get("target").attr("class")
-				}, {
+				} /*{
 					"name": "MediaCardCollection",
 					"presentation": this.config.get("presentation")
-				}]
+				}*/]
 			},
 			"plugins": [{
 				"name": "ModalComposer",

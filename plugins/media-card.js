@@ -15,6 +15,11 @@ plugin.config = {
 	"appTargetClass": "echo-apps-mediagallery"
 };
 
+plugin.templates = {
+	"lightbox": '<img class="{plugin.class:media}"/>',
+	"meta": '<div class="{plugin.class:meta}"/>'
+};
+
 plugin.init = function() {
 	var cssClass = "." + this.config.get("appTargetClass").replace(/\s+/g, ".") // it helps to apply css rules to current app instance only
 		+ " ." + this.cssClass;
@@ -38,8 +43,30 @@ plugin.component.renderers.content = function(element) {
 		return media
 			? element.empty().append(media)
 			: item.parentRenderer("content", arguments);
+	} else if (layoutMode === "lightbox") {
+		var oembed = item.get("data.object.parsedContent.oembed") || {};
+		var url = oembed.url ? oembed.url : oembed.thumbnail_url;
+		$("<img>").one("load", function(e) {
+			if (!url) return;
+			$(".echo-streamserver-controls-cardcollection-body").data("galleria")
+				.push({
+					"image": url,
+					"thumbnail": url,
+					"big": url,
+					"original": this
+				})
+				.refreshImage();
+		}).attr("src", url);
+		return;
 	}
 	item.parentRenderer("content", arguments);
+	return element;
+};
+
+plugin.component.renderers.sourceIcon = function(element) {
+	if (this.config.get("presentation.mediaLayoutMode") !== "lightbox") {
+		this.component.parentRenderer("sourceIcon", arguments);
+	}
 	return element;
 };
 
