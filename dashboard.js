@@ -122,11 +122,11 @@ dashboard.config.ecl = [{
 	},
 	"items":[{
 		"component": "Input",
-		"name": "maxCardWidth",
+		"name": "minColumnWidth",
 		"type": "number",
 		"config": {
-			"title": "Maximum card width",
-			"desc": "Specify a maximum width (in pixels) of a media card.",
+			"title": "Minimum column width",
+			"desc": "Specify a minimum width of a column in a grid (in pixels)",
 			"options": [],
 			"data": {"sample": 250}
 		}

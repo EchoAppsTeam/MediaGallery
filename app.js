@@ -15,7 +15,7 @@ gallery.config = {
 		"buttonText": "Submit your media"
 	},
 	"presentation": {
-		"maxCardWidth": 250,
+		"minColumnWidth": 250,
 		"isotopeLayoutMode": "masonry",
 		"mediaLayoutMode": "full"
 	},
@@ -65,6 +65,7 @@ gallery.templates.main =
 	'<div class="{class:content}"></div>';
 
 gallery.renderers.content = function(element) {
+	var presentation = this.config.get("presentation");
 	this.initComponent({
 		"id": "Conversations",
 		"component": "Echo.Apps.Conversations",
@@ -82,16 +83,16 @@ gallery.renderers.content = function(element) {
 				}
 			},
 			"replyComposer": {
-				"visible": (this.config.get("presentation.mediaLayoutMode") !== "pure" && this.config.get("advanced.replyComposer.visible"))
+				"visible": (presentation.mediaLayoutMode !== "pure" &&
+						this.config.get("advanced.replyComposer.visible"))
 			},
 			"allPosts": {
 				"plugins": [{
 					"name": "MediaCard",
-					"presentation": this.config.get("presentation"),
-					"appTargetClass": this.config.get("target").attr("class")
+					"presentation": presentation
 				}, {
 					"name": "MediaCardCollection",
-					"presentation": this.config.get("presentation")
+					"presentation": presentation
 				}]
 			},
 			"plugins": [{
@@ -103,6 +104,9 @@ gallery.renderers.content = function(element) {
 	});
 	return element;
 };
+
+gallery.css =
+	'.echo-sdk-ui .{class} .echo-streamserver-controls-cardcollection-messageText, .echo-sdk-ui .{class} .nav.echo-apps-conversations-streamHeader { margin-left: 5px; margin-right: 5px; }';
 
 Echo.App.create(gallery);
 

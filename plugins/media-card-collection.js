@@ -17,22 +17,31 @@ plugin.config = {
 			"queue": false
 		},
 		"layoutMode": "masonry",
+		// use only jQuery engine for animation in mozilla browsers
+		// due to the issues with video display with CSS transitions
 		"animationEngine": isMozillaBrowser ? "jquery" : "best-available"
 	},
-	"cardBottomMargin": 10 // we need this value (currently 10px) to calculate proper columns width,
-};							// and keep margin value at X and Y axis similar
+	"columnsMargin": 10, // margin between columns
+	"containerResizeDebounceTimeout": 250 // in ms
+};
 
 plugin.init = function() {
-	var isotopeLayoutMode = this.config.get("presentation.isotopeLayoutMode");
-	this.config.set("isotope.layoutMode", isotopeLayoutMode);
-	if (isotopeLayoutMode === "masonry") {
-		var columnWidth = this.config.get("presentation.maxCardWidth") + this.config.get ("cardBottomMargin");
-		this.config.set("isotope." + isotopeLayoutMode + ".columnWidth", columnWidth);
-	}
+	// define Isotope layout mode based on the data we got from "presentation" field
+	this.config.set("isotope.layoutMode", this.config.get("presentation.isotopeLayoutMode"));
+
+	this._resizeHandler = Echo.Utils.debounce(
+		$.proxy(this._refreshView, this),
+		this.config.get("containerResizeDebounceTimeout")
+	);
+	$(window).on("resize", this._resizeHandler);
 };
 
 plugin.enabled = function() {
 	return document.compatMode !== "BackCompat";
+};
+
+plugin.destroy = function() {
+	$(window).off("resize", this._resizeHandler);
 };
 
 plugin.dependencies = [{
@@ -56,9 +65,38 @@ $.map(["Echo.StreamServer.Controls.CardCollection.onRender",
 });
 
 plugin.methods._refreshView = function() {
-	var plugin = this, stream = this.component;
-	var body = stream.view.get("body");
+	var plugin = this;
+	var stream = this.component;
+	var columns = 1; // number of columns to display at a given screen size
+	var columnsMargin = plugin.config.get("columnsMargin");
 	var hasEntries = stream.threads.length;
+	var minColumnWidth = plugin.config.get("presentation.minColumnWidth");
+	var body = stream.view.get("body");
+
+	// initial "CardCollection.onItemsRenderingComplete" event
+	// happens when "body" is not yet in the DOM tree, so we use
+	// Collection target to calculate width in this case
+	var bodyWidth = body.width() || stream.config.get("target").width();
+
+	if (hasEntries && bodyWidth) {
+		while (Math.floor(bodyWidth / (columns + 1)) >= minColumnWidth) {
+			columns++;
+		}
+
+		// if bodyWidth % columns = 0, Isotope can't handle
+		// the last column and shows minus one column, in this case
+		// we subtract 1px from the column width to let Isotope
+		// handle the last column properly
+		var columnWidth = Math.floor(bodyWidth / columns) - 1;
+		this.config.set("isotope.masonry.columnWidth", columnWidth);
+
+		// apply max-width and margin to all top level items
+		body.children().css({
+			"margin-left": (columnsMargin / 2) + "px", // center-align cards
+			"max-width": (columnWidth - columnsMargin) + "px"
+		});
+	}
+
 	if (body.data("isotope")) {
 		if (hasEntries) {
 			body.isotope("reloadItems").isotope({"sortBy": "original-order"});
