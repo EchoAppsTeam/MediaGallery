@@ -67,7 +67,6 @@ $.map(["Echo.StreamServer.Controls.CardCollection.onRender",
 plugin.methods._refreshView = function() {
 	var plugin = this;
 	var stream = this.component;
-	var columns = 1; // number of columns to display at a given screen size
 	var columnsMargin = plugin.config.get("columnsMargin");
 	var hasEntries = stream.threads.length;
 	var minColumnWidth = plugin.config.get("presentation.minColumnWidth");
@@ -79,15 +78,15 @@ plugin.methods._refreshView = function() {
 	var bodyWidth = body.width() || stream.config.get("target").width();
 
 	if (hasEntries && bodyWidth) {
-		while (Math.floor(bodyWidth / (columns + 1)) >= minColumnWidth) {
-			columns++;
-		}
+		var columns = Math.floor(bodyWidth / minColumnWidth);
 
 		// if bodyWidth % columns = 0, Isotope can't handle
 		// the last column and shows minus one column, in this case
 		// we subtract 1px from the column width to let Isotope
 		// handle the last column properly
-		var columnWidth = Math.floor(bodyWidth / columns) - 1;
+		var adjustment = bodyWidth % columns === 0 ? 1 : 0;
+		var columnWidth = Math.floor(bodyWidth / columns) - adjustment;
+
 		this.config.set("isotope.masonry.columnWidth", columnWidth);
 
 		// apply max-width and margin to all top level items
@@ -104,7 +103,9 @@ plugin.methods._refreshView = function() {
 			body.isotope("destroy");
 		}
 	} else if (hasEntries) {
-		body.isotope(plugin.config.get("isotope"));
+		// init Isotope and *unbind* native resize sniffer,
+		// since we are handling window resize event ourselves
+		body.isotope(plugin.config.get("isotope")).isotope("unbindResize");
 	}
 };
 
