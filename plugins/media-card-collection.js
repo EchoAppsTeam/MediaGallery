@@ -78,7 +78,13 @@ plugin.methods._refreshView = function() {
 	var bodyWidth = body.width() || stream.config.get("target").width();
 
 	if (hasEntries && bodyWidth) {
-		var columns = Math.floor(bodyWidth / minColumnWidth);
+		var columns = Math.floor(bodyWidth / minColumnWidth) || 1;
+
+		// if we have less items that projected columns count,
+		// let existing items take the whole width of container
+		if (columns > stream.threads.length) {
+			columns = stream.threads.length;
+		}
 
 		// if bodyWidth % columns = 0, Isotope can't handle
 		// the last column and shows minus one column, in this case
@@ -89,10 +95,10 @@ plugin.methods._refreshView = function() {
 
 		this.config.set("isotope.masonry.columnWidth", columnWidth);
 
-		// apply max-width and margin to all top level items
+		// apply width and margin to all top level items
 		body.children().css({
 			"margin-left": (columnsMargin / 2) + "px", // center-align cards
-			"max-width": (columnWidth - columnsMargin) + "px"
+			"width": (columnWidth - columnsMargin) + "px"
 		});
 	}
 
