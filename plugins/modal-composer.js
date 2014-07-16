@@ -31,10 +31,6 @@ plugin.events = {
 	}
 };
 
-plugin.destroy = function() {
-	this._destroyModal();
-};
-
 plugin.component.renderers.postComposer = function(element) {
 	this.component.parentRenderer("postComposer", arguments);
 	var modal = new Echo.GUI.Modal({
@@ -66,6 +62,10 @@ plugin.renderers.submitButton = function(element) {
 	return element;
 };
 
+plugin.methods.destroy = function() {
+	this._destroyModal();
+};
+
 plugin.methods._destroyModal = function() {
 	if (!this.get("modal")) return; // modal doesn't exist
 	this.get("modal").hide();
@@ -75,7 +75,7 @@ plugin.methods._destroyModal = function() {
 plugin.css =
 	'.echo-sdk-ui .{plugin.class} .modal-body .echo-streamserver-controls-cardcomposer-container { padding: 0px; border: 0px; }' +
 	'.echo-sdk-ui .{plugin.class} .modal-body .echo-apps-conversations-postComposer { margin-bottom: 0px; }' +
-	'.echo-sdk-ui .{plugin.class} .modal-body .echo-streamserver-controls-cardcomposer-auth, .echo-sdk-ui .{plugin.class} .modal-body .modal-header h3 { font-family: "Helvetica Neue", Helvetica, Arial, sans-serif; }' +
+	'.echo-sdk-ui .{plugin.class} .modal-body .echo-streamserver-controls-cardcomposer-auth, .echo-sdk-ui .{plugin.class} .modal-header h3 { font-family: "Helvetica Neue", Helvetica, Arial, sans-serif; }' +
 	'.{plugin.class} a.dropdown-toggle { font-family: "Helvetica Neue", Helvetica, Arial, sans-serif; }' +
 	'.{plugin.class:submitPanel} { background-color: #f0f0f0; border: 1px solid #d5d5d5; margin: 5px 5px 15px 5px; }' +
 	'.{plugin.class:submitHead} { margin: 30px 40px 15px 40px; color: #515151; font-family: "Helvetica Neue", Helvetica, Arial, sans-serif; }' +

@@ -40,10 +40,6 @@ plugin.enabled = function() {
 	return document.compatMode !== "BackCompat";
 };
 
-plugin.destroy = function() {
-	$(window).off("resize", this._resizeHandler);
-};
-
 plugin.dependencies = [{
 	"loaded": function() {
 		return !!Echo.jQuery().isotope;
@@ -63,6 +59,10 @@ $.map(["Echo.StreamServer.Controls.CardCollection.onRender",
 ], function(eventName) {
 	plugin.events[eventName] = refreshViewCallback;
 });
+
+plugin.methods.destroy = function() {
+	$(window).off("resize", this._resizeHandler);
+};
 
 plugin.methods._refreshView = function() {
 	var plugin = this;
