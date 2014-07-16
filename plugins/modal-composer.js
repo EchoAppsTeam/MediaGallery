@@ -37,6 +37,7 @@ plugin.component.renderers.postComposer = function(element) {
 		"show": !!this.get("composerRendered"),
 		"extraClass": this.cssClass,
 		"footer": false,
+		"fade": true,
 		"data": {
 			"title": this.config.get("nativeSubmissions.buttonText"),
 			"body": element
