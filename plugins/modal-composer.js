@@ -23,11 +23,8 @@ plugin.init = function() {
 };
 
 plugin.events = {
-	"Echo.StreamServer.Controls.CardComposer.onPostComplete": {
-		"context": "global",
-		"handler": function() {
-			this._destroyModal();
-		}
+	"Echo.StreamServer.Controls.CardComposer.onPostComplete": function() {
+		this._destroyModal();
 	}
 };
 
@@ -37,7 +34,6 @@ plugin.component.renderers.postComposer = function(element) {
 		"show": !!this.get("composerRendered"),
 		"extraClass": this.cssClass,
 		"footer": false,
-		"fade": true,
 		"data": {
 			"title": this.config.get("nativeSubmissions.buttonText"),
 			"body": element
@@ -58,7 +54,13 @@ plugin.renderers.submitButton = function(element) {
 		"label": this.config.get("nativeSubmissions.buttonText")
 	});
 	element.click(function() {
-		self.component.view.render({"name": "postComposer"});
+		// trying to reuse previously created popup first,
+		// if it doesn't exist - build a new one!
+		if (self.get("modal")) {
+			self.get("modal").show();
+		} else {
+			self.component.view.render({"name": "postComposer"});
+		}
 	});
 	return element;
 };
@@ -70,7 +72,7 @@ plugin.methods.destroy = function() {
 plugin.methods._destroyModal = function() {
 	if (!this.get("modal")) return; // modal doesn't exist
 	this.get("modal").hide();
-	this.set("modal", undefined);
+	this.remove("modal");
 };
 
 plugin.css =

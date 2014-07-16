@@ -80,7 +80,7 @@ plugin.methods._refreshView = function() {
 	if (hasEntries && bodyWidth) {
 		var columns = Math.floor(bodyWidth / minColumnWidth) || 1;
 
-		// if we have less items that projected columns count,
+		// if we have less items than projected columns count,
 		// let existing items take the whole width of container
 		if (columns > stream.threads.length) {
 			columns = stream.threads.length;
