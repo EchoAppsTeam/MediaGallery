@@ -106,6 +106,7 @@ gallery.renderers.content = function(element) {
 };
 
 gallery.css =
+	'.echo-sdk-ui .{class} .echo-streamserver-controls-cardcollection-more { margin-left: 5px; margin-right: 5px; }' +
 	'.echo-sdk-ui .{class} .echo-streamserver-controls-cardcollection-messageText, .echo-sdk-ui .{class} .nav.echo-apps-conversations-streamHeader { margin-left: 5px; margin-right: 5px; }';
 
 Echo.App.create(gallery);

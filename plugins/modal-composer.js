@@ -83,7 +83,7 @@ plugin.css =
 	'.{plugin.class:submitPanel} { background-color: #f0f0f0; border: 1px solid #d5d5d5; margin: 5px 5px 15px 5px; }' +
 	'.{plugin.class:submitHead} { margin: 30px 40px 15px 40px; color: #515151; font-family: "Helvetica Neue", Helvetica, Arial, sans-serif; }' +
 	'.echo-sdk-ui .{plugin.class:submitPanel} > .{plugin.class:submitButton} { margin: 0px 40px 30px 40px; }' +
-	'.{plugin.class:submitHeadBrand} { font-size: 30px; letter-spacing: -1px; margin-bottom: 5px; }' +
+	'.{plugin.class:submitHeadBrand} { font-size: 30px; letter-spacing: -1px; margin-bottom: 5px; line-height: 35px; }' +
 	'.{plugin.class:submitHeadText} { font-size: 18px; line-height: 30px; font-weight: 200; }';
 
 Echo.Plugin.create(plugin);

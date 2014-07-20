@@ -21,18 +21,21 @@ plugin.config = {
 		// due to the issues with video display with CSS transitions
 		"animationEngine": isMozillaBrowser ? "jquery" : "best-available"
 	},
-	"columnsMargin": 10, // margin between columns
+	"columnMargin": 10, // margin between columns
+	"itemDeleteDebounceTimeout": 100, // in ms
 	"containerResizeDebounceTimeout": 250 // in ms
 };
 
 plugin.init = function() {
+	var plugin = this;
+
 	// define Isotope layout mode based on the data we got from "presentation" field
 	this.config.set("isotope.layoutMode", this.config.get("presentation.isotopeLayoutMode"));
 
-	this._resizeHandler = Echo.Utils.debounce(
-		$.proxy(this._refreshView, this),
-		this.config.get("containerResizeDebounceTimeout")
-	);
+	this._resizeHandler = Echo.Utils.debounce(function() {
+		plugin._refreshView(true);
+	}, this.config.get("containerResizeDebounceTimeout"));
+
 	$(window).on("resize", this._resizeHandler);
 };
 
@@ -47,8 +50,28 @@ plugin.dependencies = [{
 	"url": "{%= baseURLs.prod %}/third-party/isotope.pkgd.js"
 }];
 
-var refreshViewCallback = function(topic, args) {
-	this._refreshView();
+plugin.events = {
+	"Echo.StreamServer.Controls.Card.onRender": function(_, args) {
+		var item = this.component.items[args.card.data.unique];
+		// define column properties (width/margin) for root items only
+		if (item && item.isRoot()) {
+			this._defineColumnPropertiesFor(item);
+		}
+	},
+	"Echo.StreamServer.Controls.Card.onDelete": function(_, args) {
+		// debounce _refreshView for delete operation (as a result of items
+		// rolling window logic) to avoid massive function invocation when
+		// we receive live updates in chunks (more than one item in a single
+		// live update)
+		if (!this._onItemDeleteHandler) {
+			this._onItemDeleteHandler = Echo.Utils.debounce(
+				$.proxy(this._refreshView, this),
+				this.config.get("itemDeleteDebounceTimeout")
+			);
+		}
+
+		this._onItemDeleteHandler();
+	}
 };
 
 $.map(["Echo.StreamServer.Controls.CardCollection.onRender",
@@ -56,34 +79,35 @@ $.map(["Echo.StreamServer.Controls.CardCollection.onRender",
 	"Echo.StreamServer.Controls.CardCollection.onItemsRenderingComplete",
 	"Echo.StreamServer.Controls.Card.Plugins.MediaCard.onChangeView",
 	"Echo.StreamServer.Controls.CardComposer.Plugins.RepliesTuner.onChangeView"
-], function(eventName) {
-	plugin.events[eventName] = refreshViewCallback;
+], function(name) {
+	plugin.events[name] = function() {
+		this._refreshView();
+	};
 });
 
 plugin.methods.destroy = function() {
 	$(window).off("resize", this._resizeHandler);
 };
 
-plugin.methods._refreshView = function() {
+plugin.methods._calcColumnWidth = function() {
 	var plugin = this;
 	var stream = this.component;
-	var columnsMargin = plugin.config.get("columnsMargin");
-	var hasEntries = stream.threads.length;
-	var minColumnWidth = plugin.config.get("presentation.minColumnWidth");
-	var body = stream.view.get("body");
+	var itemsCount = stream.threads.length;
+	var columnWidth = plugin.config.get("presentation.minColumnWidth");
 
 	// initial "CardCollection.onItemsRenderingComplete" event
 	// happens when "body" is not yet in the DOM tree, so we use
 	// Collection target to calculate width in this case
-	var bodyWidth = body.width() || stream.config.get("target").width();
+	var bodyWidth = stream.view.get("body").width() ||
+			stream.config.get("target").width();
 
-	if (hasEntries && bodyWidth) {
-		var columns = Math.floor(bodyWidth / minColumnWidth) || 1;
+	if (itemsCount && bodyWidth) {
+		var columns = Math.floor(bodyWidth / columnWidth) || 1;
 
 		// if we have less items than projected columns count,
 		// let existing items take the whole width of container
-		if (columns > stream.threads.length) {
-			columns = stream.threads.length;
+		if (columns > itemsCount) {
+			columns = itemsCount;
 		}
 
 		// if bodyWidth % columns = 0, Isotope can't handle
@@ -91,15 +115,38 @@ plugin.methods._refreshView = function() {
 		// we subtract 1px from the column width to let Isotope
 		// handle the last column properly
 		var adjustment = bodyWidth % columns === 0 ? 1 : 0;
-		var columnWidth = Math.floor(bodyWidth / columns) - adjustment;
+		columnWidth = Math.floor(bodyWidth / columns) - adjustment;
 
-		this.config.set("isotope.masonry.columnWidth", columnWidth);
+	}
+	return columnWidth;
+};
 
-		// apply width and margin to all top level items
-		body.children().css({
-			"margin-left": (columnsMargin / 2) + "px", // center-align cards
-			"width": (columnWidth - columnsMargin) + "px"
+plugin.methods._defineColumnPropertiesFor = function(items, isWindowResized) {
+	// take care of situations where column width:
+	//  - is unknown, i.e. it was not calculated yet
+	//  - should be recelculated due to window resize
+	if (!this.config.get("isotope.masonry.columnWidth") || isWindowResized) {
+		this.config.set("isotope.masonry.columnWidth", this._calcColumnWidth());
+	}
+
+	var width = this.config.get("isotope.masonry.columnWidth");
+	var margin = this.config.get("columnMargin");
+	$.map($.isArray(items) ? items : [items], function(item) {
+		item.config.get("target").css({
+			"margin-left": (margin / 2) + "px", // center-align cards
+			"width": (width - margin) + "px"
 		});
+	});
+};
+
+plugin.methods._refreshView = function(isWindowResized) {
+	var plugin = this;
+	var stream = this.component;
+	var body = stream.view.get("body");
+	var hasEntries = stream.threads.length;
+
+	if (hasEntries && isWindowResized) {
+		this._defineColumnPropertiesFor(stream.threads, true);
 	}
 
 	if (body.data("isotope")) {
