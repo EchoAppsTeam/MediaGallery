@@ -9,6 +9,11 @@ if (Echo.Plugin.isDefined(plugin)) return;
 
 var isMozillaBrowser = 'MozAppearance' in document.documentElement.style;
 
+plugin.vars = {
+	"appContainerWidth": undefined,
+	"refreshViewDebounced": undefined
+};
+
 plugin.config = {
 	"isotope": {
 		"animationOptions": {
@@ -22,21 +27,12 @@ plugin.config = {
 		"animationEngine": isMozillaBrowser ? "jquery" : "best-available"
 	},
 	"columnMargin": 10, // margin between columns
-	"itemDeleteDebounceTimeout": 100, // in ms
-	"containerResizeDebounceTimeout": 250 // in ms
+	"refreshViewDebounceTimeout": 150 // in ms
 };
 
 plugin.init = function() {
-	var plugin = this;
-
 	// define Isotope layout mode based on the data we got from "presentation" field
 	this.config.set("isotope.layoutMode", this.config.get("presentation.isotopeLayoutMode"));
-
-	this._resizeHandler = Echo.Utils.debounce(function() {
-		plugin._refreshView(true);
-	}, this.config.get("containerResizeDebounceTimeout"));
-
-	$(window).on("resize", this._resizeHandler);
 };
 
 plugin.enabled = function() {
@@ -55,51 +51,60 @@ plugin.events = {
 		var item = this.component.items[args.card.data.unique];
 		// define column properties (width/margin) for root items only
 		if (item && item.isRoot()) {
-			this._defineColumnPropertiesFor(item);
+			this._applyColumnPropertiesFor(item, true);
 		}
-	},
-	"Echo.StreamServer.Controls.Card.onDelete": function(_, args) {
-		// debounce _refreshView for delete operation (as a result of items
-		// rolling window logic) to avoid massive function invocation when
-		// we receive live updates in chunks (more than one item in a single
-		// live update)
-		if (!this._onItemDeleteHandler) {
-			this._onItemDeleteHandler = Echo.Utils.debounce(
-				$.proxy(this._refreshView, this),
-				this.config.get("itemDeleteDebounceTimeout")
-			);
-		}
-
-		this._onItemDeleteHandler();
 	}
 };
 
 $.map(["Echo.StreamServer.Controls.CardCollection.onRender",
 	"Echo.StreamServer.Controls.CardCollection.onRefresh",
-	"Echo.StreamServer.Controls.CardCollection.onItemsRenderingComplete",
-	"Echo.StreamServer.Controls.Card.Plugins.MediaCard.onChangeView",
-	"Echo.StreamServer.Controls.CardComposer.Plugins.RepliesTuner.onChangeView"
+	"Echo.StreamServer.Controls.CardCollection.onItemsRenderingComplete"
 ], function(name) {
 	plugin.events[name] = function() {
 		this._refreshView();
 	};
 });
 
-plugin.methods.destroy = function() {
-	$(window).off("resize", this._resizeHandler);
+$.map(["Echo.StreamServer.Controls.Card.onDelete",
+	"Echo.Apps.Conversations.onAppResize",
+	"Echo.StreamServer.Controls.Card.Plugins.MediaCard.onChangeView",
+	"Echo.StreamServer.Controls.CardComposer.Plugins.RepliesTuner.onChangeView"
+], function(name) {
+	plugin.events[name] = function() {
+		if (!this.get("refreshViewDebounced")) {
+			this.set("refreshViewDebounced", Echo.Utils.debounce(
+				$.proxy(this._refreshView, this),
+				this.config.get("refreshViewDebounceTimeout")
+			));
+		}
+		this.get("refreshViewDebounced")();
+	};
+});
+
+plugin.methods._isAppWidthChanged = function() {
+	var currentWidth = this._getAppWidth();
+	if (this.get("appContainerWidth") !== currentWidth) {
+		// keep current width in plugin var to compare
+		// its value next time the function is called
+		this.set("appContainerWidth", currentWidth);
+		return true;
+	}
+	return false;
+};
+
+plugin.methods._getAppWidth = function() {
+	// initial "CardCollection.onItemsRenderingComplete" event
+	// happens when "body" is not yet in the DOM tree, so we use
+	// Collection target to calculate width in this case
+	return this.component.view.get("body").width() ||
+		this.component.config.get("target").width();
 };
 
 plugin.methods._calcColumnWidth = function() {
 	var plugin = this;
-	var stream = this.component;
-	var itemsCount = stream.threads.length;
+	var bodyWidth = this._getAppWidth();
+	var itemsCount = this.component.threads.length;
 	var columnWidth = plugin.config.get("presentation.minColumnWidth");
-
-	// initial "CardCollection.onItemsRenderingComplete" event
-	// happens when "body" is not yet in the DOM tree, so we use
-	// Collection target to calculate width in this case
-	var bodyWidth = stream.view.get("body").width() ||
-			stream.config.get("target").width();
 
 	if (itemsCount && bodyWidth) {
 		var columns = Math.floor(bodyWidth / columnWidth) || 1;
@@ -121,13 +126,18 @@ plugin.methods._calcColumnWidth = function() {
 	return columnWidth;
 };
 
-plugin.methods._defineColumnPropertiesFor = function(items, isWindowResized) {
+plugin.methods._applyColumnPropertiesFor = function(items, force) {
 	// take care of situations where column width:
 	//  - is unknown, i.e. it was not calculated yet
-	//  - should be recelculated due to window resize
-	if (!this.config.get("isotope.masonry.columnWidth") || isWindowResized) {
+	//  - should be recalculated due to window/container resize
+	var isWidthChanged = this._isAppWidthChanged();
+	if (!this.config.get("isotope.masonry.columnWidth") || isWidthChanged) {
 		this.config.set("isotope.masonry.columnWidth", this._calcColumnWidth());
 	}
+
+	// exit if an app width was not changed and we
+	// do not want to force width/margin application
+	if (!isWidthChanged && !force) return;
 
 	var width = this.config.get("isotope.masonry.columnWidth");
 	var margin = this.config.get("columnMargin");
@@ -139,14 +149,14 @@ plugin.methods._defineColumnPropertiesFor = function(items, isWindowResized) {
 	});
 };
 
-plugin.methods._refreshView = function(isWindowResized) {
+plugin.methods._refreshView = function() {
 	var plugin = this;
 	var stream = this.component;
 	var body = stream.view.get("body");
 	var hasEntries = stream.threads.length;
 
-	if (hasEntries && isWindowResized) {
-		this._defineColumnPropertiesFor(stream.threads, true);
+	if (hasEntries) {
+		this._applyColumnPropertiesFor(stream.threads);
 	}
 
 	if (body.data("isotope")) {
