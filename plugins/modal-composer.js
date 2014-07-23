@@ -38,6 +38,13 @@ plugin.component.renderers.postComposer = function(element) {
 			"title": this.config.get("nativeSubmissions.buttonText"),
 			"body": element
 		},
+		"onShow": function() {
+			// setTimeout is used here to let the modal dialog
+			// be rendered first and after that we apply animation (via CSS)
+			setTimeout(function() {
+				$(modal.element).addClass("nativeSubmissionAnimation");
+			}, 0);
+		},
 		"onHide": $.proxy(this._destroyModal, this)
 	});
 	this.set("modal", modal);
@@ -76,6 +83,8 @@ plugin.methods._destroyModal = function() {
 };
 
 plugin.css =
+	'.echo-sdk-ui .{plugin.class}.modal { -webkit-transform: scale(0.7); -moz-transform: scale(0.7); -ms-transform: scale(0.7); transform: scale(0.7); opacity: 0; -webkit-transition: all 0.3s; -moz-transition: all 0.3s; transition: all 0.3s; }' +
+	'.echo-sdk-ui .{plugin.class}.modal.in.nativeSubmissionAnimation { -webkit-transform: scale(1); -moz-transform: scale(1); -ms-transform: scale(1); transform: scale(1); opacity: 1; }' +
 	'.echo-sdk-ui .{plugin.class} .modal-body .echo-streamserver-controls-cardcomposer-container { padding: 0px; border: 0px; }' +
 	'.echo-sdk-ui .{plugin.class} .modal-body .echo-apps-conversations-postComposer { margin-bottom: 0px; }' +
 	'.echo-sdk-ui .{plugin.class} .modal-body .echo-streamserver-controls-cardcomposer-auth, .echo-sdk-ui .{plugin.class} .modal-header h3 { font-family: "Helvetica Neue", Helvetica, Arial, sans-serif; }' +
