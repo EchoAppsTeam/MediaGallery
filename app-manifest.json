@@ -1,7 +1,7 @@
 {
     "id": "{%=manifest.id%}",
     "name": "{%=manifest.name%}",
-    "description": "Media Gallery allows you to create real-time collections of user-generated photos and videos. Media can be collected from Social Sources and/or directly submitted on the page.",
+    "description": "Create Stunning User Generated Photo Galleries",
     "app_version": "{%=packageVersions.stable%}",
     "icon": "{%=baseURLs.prod%}/images/icon.png",
     "developer": {
