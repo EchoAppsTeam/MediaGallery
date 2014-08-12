@@ -63,7 +63,7 @@ dashboard.config.ecl = [{
 			"dataserverBundleName": "Echo MediaGallery Auto-Generated Bundle for {instanceName}"
 		},
 		"apiBaseURLs": {
-			"DataServer": "http://nds.echoenabled.com/api/"
+			"DataServer": "{%= apiBaseURLs.DataServer %}/"
 		}
 	}
 }, {
@@ -298,9 +298,9 @@ dashboard.methods._prepareECL = function(items) {
 
 	var instructions = {
 		"targetURL": function(item) {
-			item.config = $.extend({
+			item.config = $.extend(true, {
 				"bundle": {
-					"url": self.get("data.instance.provisioningDetails.dataServerBundleURL")
+					"url": self.get("data.instance.provisioningDetails.bundleURL")
 				},
 				"domains": self.config.get("domains"),
 				"apiToken": self.config.get("dataserverToken"),
@@ -381,18 +381,8 @@ dashboard.methods._displayError = function(message) {
 };
 
 dashboard.methods._assembleTargetURL = function() {
-	var provisionedURL = this.get("data.instance.provisioningDetails.targetURL");
-	if (provisionedURL) {
-		return provisionedURL;
-	}
-	var re =  new RegExp("\/" + this.get("data.instance.name") + "$");
-	var targetURL = this.get("data.instance.config.targetURL");
-
-	if (!targetURL || !targetURL.match(re)) {
-		targetURL =  "http://" + this.config.get("domains")[0] + "/social-source-input/" + this.get("data.instance.name");
-	}
-
-	return targetURL;
+	return this.get("data.instance.config.targetURL")
+		|| this.get("data.instance.provisioningDetails.targetURL");
 };
 
 Echo.AppServer.Dashboard.create(dashboard);

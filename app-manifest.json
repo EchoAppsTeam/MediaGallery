@@ -3,7 +3,7 @@
 	"name": "{%=manifest.name%}",
 	"description": "Media Gallery allows you to create real-time collections of user-generated photos and videos. Media can be collected from Social Sources and/or directly submitted on the page.",
 	"app_version": "{%=packageVersions.stable%}",
-	"icon": "{%=baseURLs.prod%}/images/icon.png",
+	"icon": "{%=appBaseURLs.prod%}/images/icon.png",
 	"developer": {
 		"id": "echo",
 		"name": "Echo",
@@ -15,19 +15,9 @@
 		"id": "instances",
 		"type": "instances",
 		"title": "Instances",
-		"script": "{%=baseURLs.prod%}/dashboard.js",
+		"script": "{%=appBaseURLs.prod%}/dashboard.js",
 		"component": "Echo.Apps.MediaGallery.Dashboard",
 		"config": {
-			"instanceManager": {
-				"instance": {"useLoadingIcon": true},
-				"preview": {
-					"dimensions": {
-						"width": 60,
-						"maxWidth": 70,
-						"minWidth": 40
-					}
-				}
-			},
 			"appkeys": "{data:apps.streamserver.appkeys}",
 			"janrainapps": "{data:apps.janrain.apps}",
 			"customer": "{data:customer}",
@@ -44,17 +34,17 @@
 	"client_widget": {
 		"component": "Echo.Apps.MediaGallery",
 		"scripts": {
-			"dev": "{%=baseURLs.dev%}/app.js",
-			"prod": "{%=baseURLs.prod%}/app.js"
+			"dev": "{%=appBaseURLs.dev%}/app.js",
+			"prod": "{%=appBaseURLs.prod%}/app.js"
 		}
 	},
 	"cloudapp_protocol_version": "1.0.0",
 	"endpoints": {
 		"instance/remove": {
-			"url": "http://api.appserver.aboutecho.com/endpoints/dataserver/instance/remove"
+			"url": "{%= apiBaseURLs.AppServer %}/endpoints/dataserver/instance/remove"
 		},
 		"instance/add": {
-			"url": "http://api.appserver.aboutecho.com/endpoints/dataserver/instance/add"
+			"url": "{%= apiBaseURLs.AppServer %}/endpoints/dataserver/instance/add"
 		}
 	}
 }
