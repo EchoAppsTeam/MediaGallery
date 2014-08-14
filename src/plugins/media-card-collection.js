@@ -43,7 +43,7 @@ plugin.dependencies = [{
 	"loaded": function() {
 		return !!Echo.jQuery().isotope;
 	},
-	"url": "{%= baseURLs.prod %}/third-party/isotope.pkgd.js"
+	"url": "{%= appBaseURLs.prod %}/third-party/isotope.pkgd.js"
 }];
 
 plugin.events = {
