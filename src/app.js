@@ -23,7 +23,17 @@ gallery.config = {
 		"FilePicker": {"apiKey": undefined},
 		"embedly": {"apiKey": undefined},
 		"Janrain": {"appId": undefined},
-		"StreamServer": {"appkey": undefined}
+		"StreamServer": {
+			"appkey": undefined,
+			"apiBaseURL": "{%= apiBaseURLs.StreamServer.apiBaseURL %}",
+			"submissionProxyURL": "{%= apiBaseURLs.StreamServer.submissionProxyURL %}",
+			"liveUpdates": {
+				"transport": "websockets",
+				"websockets": {
+					"URL": "{%= apiBaseURLs.StreamServer.websockets %}"
+				}
+			}
+		}
 	},
 	"advanced": {
 		"topPosts": { "visible": false },

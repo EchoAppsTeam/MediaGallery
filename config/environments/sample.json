@@ -1,5 +1,5 @@
 {
-	"version": 3,
+	"version": 4,
 	"manifest": {
 		"id": "",
 		"name": ""
@@ -10,6 +10,11 @@
 	},
 	"apiBaseURLs": {
 		"DataServer": "",
-		"AppServer": ""
+		"AppServer": "",
+		"StreamServer": {
+			"apiBaseURL": "",
+			"submissionProxyURL": "",
+			"websockets": ""
+		}
 	}
 }
