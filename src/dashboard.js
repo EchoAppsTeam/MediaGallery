@@ -47,11 +47,6 @@ dashboard.dependencies = [{
 	"control": "Echo.DataServer.Controls.Pack"
 }];
 
-dashboard.config = {
-	"appkeys": [],
-	"janrainapps": []
-};
-
 dashboard.config.ecl = [{
 	"name": "targetURL",
 	"component": "Echo.DataServer.Controls.Dashboard.DataSourceGroup",
@@ -262,14 +257,16 @@ dashboard.config.normalizer = {
 dashboard.init = function() {
 	var self = this, parent = $.proxy(this.parent, this);
 	this._fetchDataServerToken(function() {
-		self.config.set("ecl", self._prepareECL(self.config.get("ecl")));
-		parent();
+		self._requestData(function() {
+			self.config.set("ecl", self._prepareECL(self.config.get("ecl")));
+			parent();
+		});
 	});
 };
 
 dashboard.methods.declareInitialConfig = function() {
-	var keys = this.config.get("appkeys", []);
-	var apps = this.config.get("janrainapps", []);
+	var keys = this.get("appkeys", []);
+	var apps = this.get("janrainapps", []);
 	return $.extend(true, {
 		"targetURL": this._assembleTargetURL(),
 		"dependencies": {
@@ -293,6 +290,32 @@ dashboard.methods.declareConfigOverrides = function() {
 	return $.extend(true, this.parent(), this.get("nestedOverrides.original"));
 };
 
+dashboard.methods._requestData = function(callback) {
+	var self = this;
+	var customerId = this.user.get("customer.id");
+	var deferreds = [];
+	var request = this.config.get("request");
+
+	var requests = [{
+		"name": "appkeys",
+		"endpoint": "customer/" + customerId + "/appkeys"
+	}, {
+		"name": "janrainapps",
+		"endpoint": "customer/" + customerId + "/janrainapps"
+	}];
+	$.map(requests, function(req) {
+		var deferredId = deferreds.push($.Deferred()) - 1;
+		request({
+			"endpoint": req.endpoint,
+			"success": function(response) {
+				self.set(req.name, response);
+				deferreds[deferredId].resolve();
+			}
+		});
+	});
+	$.when.apply($, deferreds).done(callback);
+};
+
 dashboard.methods._prepareECL = function(items) {
 	var self = this;
 
@@ -302,7 +325,6 @@ dashboard.methods._prepareECL = function(items) {
 				"bundle": {
 					"url": self.get("data.instance.provisioningDetails.bundleURL")
 				},
-				"domains": self.config.get("domains"),
 				"apiToken": self.config.get("dataserverToken"),
 				"instanceName": self.get("data.instance.name"),
 				"valueHandler": function() {
@@ -312,7 +334,7 @@ dashboard.methods._prepareECL = function(items) {
 			return item;
 		},
 		"dependencies.appkey": function(item) {
-			item.config.options = $.map(self.config.get("appkeys"), function(appkey) {
+			item.config.options = $.map(self.get("appkeys"), function(appkey) {
 				return {
 					"title": appkey.key,
 					"value": appkey.key
@@ -321,7 +343,7 @@ dashboard.methods._prepareECL = function(items) {
 			return item;
 		},
 		"dependencies.janrainapp": function(item) {
-			item.config.options = $.map(self.config.get("janrainapps"), function(app) {
+			item.config.options = $.map(self.get("janrainapps"), function(app) {
 				return {
 					"title": app.name,
 					"value": app.name
@@ -345,10 +367,10 @@ dashboard.methods._prepareECL = function(items) {
 
 dashboard.methods._fetchDataServerToken = function(callback) {
 	var self = this;
-	Echo.AppServer.API.request({
+	this.config.get("request")({
 		"endpoint": "customer/{id}/subscriptions",
-		"id": this.get("data.customer").id,
-		"onData": function(response) {
+		"id": this.user.get("customer.id"),
+		"success": function(response) {
 			var token = Echo.Utils.foldl("", response, function(subscription, acc) {
 				return subscription.product.name === "dataserver"
 					? subscription.extra.token
@@ -365,10 +387,10 @@ dashboard.methods._fetchDataServerToken = function(callback) {
 				);
 			}
 		},
-		"onError": function(response) {
+		"error": function(response) {
 			self._displayError(self.labels.get("failedToFetchToken", {"reason": response.data.msg}));
 		}
-	}).send();
+	});
 };
 
 dashboard.methods._displayError = function(message) {
