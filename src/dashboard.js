@@ -259,49 +259,20 @@ dashboard.config.normalizer = {
 dashboard.config.modifiers = {
 	"dependencies.appkey": {
 		"endpoint": "customer/{self:user.getCustomerId}/appkeys",
-		"processor": function(appkeys) {
-			return {
-				"config": appkeys.map(function(appkey) {
-					return {"title": appkey.key, "value": appkey.key};
-				})
-			};
+		"processor": function() {
+			return this.getAppkey.apply(this, arguments);
 		}
 	},
 	"dependencies.janrainapp": {
 		"endpoint": "customer/{self:user.getCustomerId}/janrainapps",
-		"processor": function(apps) {
-			return {
-				"config": apps.map(function(app) {
-					return {"title": app.name, "value": app.name};
-				})
-			};
+		"processor": function() {
+			return this.getJanrainApp.apply(this, arguments);
 		}
 	},
 	"targetURL": {
 		"endpoint": "customer/{self:user.getCustomerId}/subscriptions",
-		"processor": function(subscriptions) {
-			var self = this;
-			var token = this.extractDataServerToken(subscriptions);
-			if (token) {
-				return {
-					"config": {
-						"bundle": {
-							"url": this.get("data.instance.provisioningDetails.bundleURL")
-						},
-						"apiToken": token,
-						"instanceName": this.get("data.instance.name"),
-						"valueHandler": function() {
-							return self._assembleTargetURL();
-						}
-					}
-				};
-			} else {
-				return {
-				 "error": self.labels.get("failedToFetchToken", {
-						"reason": self.labels.get("dataserverSubscriptionNotFound")
-					})
-				};
-			}
+		"processor": function() {
+			return this.getBundleTargetURL.apply(this, arguments);
 		}
 	}
 };
