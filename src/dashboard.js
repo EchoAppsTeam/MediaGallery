@@ -8,7 +8,8 @@ var dashboard = Echo.AppServer.Dashboard.manifest("Echo.Apps.MediaGallery.Dashbo
 dashboard.inherits = Echo.Utils.getComponent("Echo.AppServer.Dashboards.AppSettings");
 
 dashboard.labels = {
-	"failedToFetchToken": "Failed to fetch customer dataserver token: {reason}"
+	"failedToFetchToken": "Failed to fetch customer dataserver token: {reason}",
+	"dataserverSubscriptionNotFound": "DataServer product subscription not found."
 };
 
 dashboard.vars = {
@@ -171,7 +172,8 @@ dashboard.config.ecl = [{
 	"name": "dependencies",
 	"type": "object",
 	"config": {
-		"title": "Dependencies"
+		"title": "Dependencies",
+		"expanded": false
 	},
 	"items": [{
 		"component": "Select",
@@ -254,14 +256,58 @@ dashboard.config.normalizer = {
 	}
 };
 
+dashboard.config.modifiers = {
+	"dependencies.appkey": {
+		"endpoint": "customer/{self:user.getCustomerId}/appkeys",
+		"processor": function(appkeys) {
+			return {
+				"config": appkeys.map(function(appkey) {
+					return {"title": appkey.key, "value": appkey.key};
+				})
+			};
+		}
+	},
+	"dependencies.janrainapp": {
+		"endpoint": "customer/{self:user.getCustomerId}/janrainapps",
+		"processor": function(apps) {
+			return {
+				"config": apps.map(function(app) {
+					return {"title": app.name, "value": app.name};
+				})
+			};
+		}
+	},
+	"targetURL": {
+		"endpoint": "customer/{self:user.getCustomerId}/subscriptions",
+		"processor": function(subscriptions) {
+			var self = this;
+			var token = this.extractDataServerToken(subscriptions);
+			if (token) {
+				return {
+					"config": {
+						"bundle": {
+							"url": this.get("data.instance.provisioningDetails.bundleURL")
+						},
+						"apiToken": token,
+						"instanceName": this.get("data.instance.name"),
+						"valueHandler": function() {
+							return self._assembleTargetURL();
+						}
+					}
+				};
+			} else {
+				return {
+				 "error": self.labels.get("failedToFetchToken", {
+						"reason": self.labels.get("dataserverSubscriptionNotFound")
+					})
+				};
+			}
+		}
+	}
+};
+
 dashboard.init = function() {
-	var self = this, parent = $.proxy(this.parent, this);
-	this._fetchDataServerToken(function() {
-		self._requestData(function() {
-			self.config.set("ecl", self._prepareECL(self.config.get("ecl")));
-			parent();
-		});
-	});
+	this.parent();
 };
 
 dashboard.methods.declareInitialConfig = function() {
@@ -288,118 +334,6 @@ dashboard.methods.declareInitialConfig = function() {
 
 dashboard.methods.declareConfigOverrides = function() {
 	return $.extend(true, this.parent(), this.get("nestedOverrides.original"));
-};
-
-dashboard.methods._requestData = function(callback) {
-	var self = this;
-	var customerId = this.user.get("customer.id");
-	var deferreds = [];
-	var request = this.config.get("request");
-
-	var requests = [{
-		"name": "appkeys",
-		"endpoint": "customer/" + customerId + "/appkeys"
-	}, {
-		"name": "janrainapps",
-		"endpoint": "customer/" + customerId + "/janrainapps"
-	}];
-	$.map(requests, function(req) {
-		var deferredId = deferreds.push($.Deferred()) - 1;
-		request({
-			"endpoint": req.endpoint,
-			"success": function(response) {
-				self.set(req.name, response);
-				deferreds[deferredId].resolve();
-			}
-		});
-	});
-	$.when.apply($, deferreds).done(callback);
-};
-
-dashboard.methods._prepareECL = function(items) {
-	var self = this;
-
-	var instructions = {
-		"targetURL": function(item) {
-			item.config = $.extend(true, {
-				"bundle": {
-					"url": self.get("data.instance.provisioningDetails.bundleURL")
-				},
-				"apiToken": self.config.get("dataserverToken"),
-				"instanceName": self.get("data.instance.name"),
-				"valueHandler": function() {
-					return self._assembleTargetURL();
-				}
-			}, item.config);
-			return item;
-		},
-		"dependencies.appkey": function(item) {
-			item.config.options = $.map(self.get("appkeys"), function(appkey) {
-				return {
-					"title": appkey.key,
-					"value": appkey.key
-				};
-			});
-			return item;
-		},
-		"dependencies.janrainapp": function(item) {
-			item.config.options = $.map(self.get("janrainapps"), function(app) {
-				return {
-					"title": app.name,
-					"value": app.name
-				};
-			});
-			return item;
-		}
-	};
-	return (function traverse(items, path) {
-		return $.map(items, function(item) {
-			var _path = path ? path + "." + item.name : item.name;
-			if (item.type === "object" && item.items) {
-				item.items = traverse(item.items, _path);
-			} else if (instructions[_path]) {
-				item = instructions[_path](item);
-			}
-			return item;
-		});
-	})(items, "");
-};
-
-dashboard.methods._fetchDataServerToken = function(callback) {
-	var self = this;
-	this.config.get("request")({
-		"endpoint": "customer/{id}/subscriptions",
-		"id": this.user.get("customer.id"),
-		"success": function(response) {
-			var token = Echo.Utils.foldl("", response, function(subscription, acc) {
-				return subscription.product.name === "dataserver"
-					? subscription.extra.token
-					: acc;
-			});
-			if (token) {
-				self.config.set("dataserverToken", token);
-				callback.call(self);
-			} else {
-				self._displayError(
-					self.labels.get("failedToFetchToken", {
-						"reason": self.labels.get("dataserverSubscriptionNotFound")
-					})
-				);
-			}
-		},
-		"error": function(response) {
-			self._displayError(self.labels.get("failedToFetchToken", {"reason": response.data.msg}));
-		}
-	});
-};
-
-dashboard.methods._displayError = function(message) {
-	this.showMessage({
-		"type": "error",
-		"message": message,
-		"target": this.config.get("target")
-	});
-	this.ready();
 };
 
 dashboard.methods._assembleTargetURL = function() {
