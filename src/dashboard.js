@@ -7,11 +7,6 @@ var dashboard = Echo.AppServer.Dashboard.manifest("Echo.Apps.MediaGallery.Dashbo
 
 dashboard.inherits = Echo.Utils.getComponent("Echo.AppServer.Dashboards.AppSettings");
 
-dashboard.labels = {
-	"failedToFetchToken": "Failed to fetch customer dataserver token: {reason}",
-	"dataserverSubscriptionNotFound": "DataServer product subscription not found."
-};
-
 dashboard.vars = {
 	"nestedOverrides": {
 		"original": {
@@ -256,7 +251,7 @@ dashboard.config.normalizer = {
 	}
 };
 
-dashboard.config.modifiers = {
+dashboard.modifiers = {
 	"dependencies.appkey": {
 		"endpoint": "customer/{self:user.getCustomerId}/appkeys",
 		"processor": function() {
@@ -282,16 +277,14 @@ dashboard.init = function() {
 };
 
 dashboard.methods.declareInitialConfig = function() {
-	var keys = this.get("appkeys", []);
-	var apps = this.get("janrainapps", []);
 	return $.extend(true, {
-		"targetURL": this._assembleTargetURL(),
+		"targetURL": this.assembleTargetURL(),
 		"dependencies": {
 			"Janrain": {
-				"appId": apps.length ? apps[0].name : undefined
+				"appId": this.getDefaultAppKey()
 			},
 			"StreamServer": {
-				"appkey": keys.length ? keys[0].key : undefined
+				"appkey": this.getDefaultJanrainApp()
 			},
 			"FilePicker": {
 				"apiKey": "AFLWUBllDRwWZl7sQO1V1z"
@@ -305,11 +298,6 @@ dashboard.methods.declareInitialConfig = function() {
 
 dashboard.methods.declareConfigOverrides = function() {
 	return $.extend(true, this.parent(), this.get("nestedOverrides.original"));
-};
-
-dashboard.methods._assembleTargetURL = function() {
-	return this.get("data.instance.config.targetURL")
-		|| this.get("data.instance.provisioningDetails.targetURL");
 };
 
 Echo.AppServer.Dashboard.create(dashboard);
