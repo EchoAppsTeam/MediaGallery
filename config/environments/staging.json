@@ -12,9 +12,9 @@
 		"DataServer": "//ds0.ul.js-kit.com/api",
 		"AppServer": "http://api.staging.appserver.aboutecho.com",
 		"StreamServer": {
-			"apiBaseURL": "//api.dss.ul.js-kit.com/v1/",
+			"apiBaseURL": "//api.dss.ul.js-kit.com/v1",
 			"submissionProxyURL": "https://apps.dss.ul.js-kit.com/v2/esp/activity",
-			"websockets": "//live.dss.ul.js-kit.com/v1/"
+			"websockets": "//live.dss.ul.js-kit.com/v1"
 		}
 	}
 }

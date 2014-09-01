@@ -12,9 +12,9 @@
 		"DataServer": "https://api.dataserver.echoenabled.com/v1",
 		"AppServer": "http://api.appserver.aboutecho.com",
 		"StreamServer": {
-			"apiBaseURL": "//api.echoenabled.com/v1/",
+			"apiBaseURL": "//api.echoenabled.com/v1",
 			"submissionProxyURL": "https://apps.echoenabled.com/v2/esp/activity",
-			"websockets": "//live.echoenabled.com/v1/"
+			"websockets": "//live.echoenabled.com/v1"
 		}
 	}
 }
