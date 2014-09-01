@@ -25,12 +25,12 @@ gallery.config = {
 		"Janrain": {"appId": undefined},
 		"StreamServer": {
 			"appkey": undefined,
-			"apiBaseURL": "{%= apiBaseURLs.StreamServer.apiBaseURL %}",
+			"apiBaseURL": "{%= apiBaseURLs.StreamServer.apiBaseURL %}/",
 			"submissionProxyURL": "{%= apiBaseURLs.StreamServer.submissionProxyURL %}",
 			"liveUpdates": {
 				"transport": "websockets",
 				"websockets": {
-					"URL": "{%= apiBaseURLs.StreamServer.websockets %}"
+					"URL": "{%= apiBaseURLs.StreamServer.websockets %}/"
 				}
 			}
 		}
