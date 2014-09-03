@@ -281,10 +281,10 @@ dashboard.methods.declareInitialConfig = function() {
 		"targetURL": this.assembleTargetURL(),
 		"dependencies": {
 			"Janrain": {
-				"appId": this.getDefaultAppKey()
+				"appId": this.getDefaultJanrainApp()
 			},
 			"StreamServer": {
-				"appkey": this.getDefaultJanrainApp()
+				"appkey": this.getDefaultAppKey()
 			},
 			"FilePicker": {
 				"apiKey": "AFLWUBllDRwWZl7sQO1V1z"
