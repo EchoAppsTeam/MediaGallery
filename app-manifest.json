@@ -16,13 +16,7 @@
 		"type": "instances",
 		"title": "Instances",
 		"script": "{%=appBaseURLs.prod%}/dashboard.js",
-		"component": "Echo.Apps.MediaGallery.Dashboard",
-		"config": {
-			"appkeys": "{data:apps.streamserver.appkeys}",
-			"janrainapps": "{data:apps.janrain.apps}",
-			"customer": "{data:customer}",
-			"domains": "{data:apps.streamserver.domains}"
-		}
+		"component": "Echo.Apps.MediaGallery.Dashboard"
 	}, {
 		"id": "docs",
 		"type": "external",

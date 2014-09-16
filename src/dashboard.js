@@ -7,10 +7,6 @@ var dashboard = Echo.AppServer.Dashboard.manifest("Echo.Apps.MediaGallery.Dashbo
 
 dashboard.inherits = Echo.Utils.getComponent("Echo.AppServer.Dashboards.AppSettings");
 
-dashboard.labels = {
-	"failedToFetchToken": "Failed to fetch customer dataserver token: {reason}"
-};
-
 dashboard.vars = {
 	"nestedOverrides": {
 		"original": {
@@ -46,11 +42,6 @@ dashboard.dependencies = [{
 	"url": "{config:cdnBaseURL.apps.dataserver}/full.pack.js",
 	"control": "Echo.DataServer.Controls.Pack"
 }];
-
-dashboard.config = {
-	"appkeys": [],
-	"janrainapps": []
-};
 
 dashboard.config.ecl = [{
 	"name": "targetURL",
@@ -176,7 +167,8 @@ dashboard.config.ecl = [{
 	"name": "dependencies",
 	"type": "object",
 	"config": {
-		"title": "Dependencies"
+		"title": "Dependencies",
+		"expanded": false
 	},
 	"items": [{
 		"component": "Select",
@@ -259,25 +251,40 @@ dashboard.config.normalizer = {
 	}
 };
 
+dashboard.modifiers = {
+	"dependencies.appkey": {
+		"endpoint": "customer/{self:user.getCustomerId}/appkeys",
+		"processor": function() {
+			return this.getAppkey.apply(this, arguments);
+		}
+	},
+	"dependencies.janrainapp": {
+		"endpoint": "customer/{self:user.getCustomerId}/janrainapps",
+		"processor": function() {
+			return this.getJanrainApp.apply(this, arguments);
+		}
+	},
+	"targetURL": {
+		"endpoint": "customer/{self:user.getCustomerId}/subscriptions",
+		"processor": function() {
+			return this.getBundleTargetURL.apply(this, arguments);
+		}
+	}
+};
+
 dashboard.init = function() {
-	var self = this, parent = $.proxy(this.parent, this);
-	this._fetchDataServerToken(function() {
-		self.config.set("ecl", self._prepareECL(self.config.get("ecl")));
-		parent();
-	});
+	this.parent();
 };
 
 dashboard.methods.declareInitialConfig = function() {
-	var keys = this.config.get("appkeys", []);
-	var apps = this.config.get("janrainapps", []);
 	return $.extend(true, {
-		"targetURL": this._assembleTargetURL(),
+		"targetURL": this.assembleTargetURL(),
 		"dependencies": {
 			"Janrain": {
-				"appId": apps.length ? apps[0].name : undefined
+				"appId": this.getDefaultJanrainApp()
 			},
 			"StreamServer": {
-				"appkey": keys.length ? keys[0].key : undefined
+				"appkey": this.getDefaultAppKey()
 			},
 			"FilePicker": {
 				"apiKey": "AFLWUBllDRwWZl7sQO1V1z"
@@ -291,98 +298,6 @@ dashboard.methods.declareInitialConfig = function() {
 
 dashboard.methods.declareConfigOverrides = function() {
 	return $.extend(true, this.parent(), this.get("nestedOverrides.original"));
-};
-
-dashboard.methods._prepareECL = function(items) {
-	var self = this;
-
-	var instructions = {
-		"targetURL": function(item) {
-			item.config = $.extend(true, {
-				"bundle": {
-					"url": self.get("data.instance.provisioningDetails.bundleURL")
-				},
-				"domains": self.config.get("domains"),
-				"apiToken": self.config.get("dataserverToken"),
-				"instanceName": self.get("data.instance.name"),
-				"valueHandler": function() {
-					return self._assembleTargetURL();
-				}
-			}, item.config);
-			return item;
-		},
-		"dependencies.appkey": function(item) {
-			item.config.options = $.map(self.config.get("appkeys"), function(appkey) {
-				return {
-					"title": appkey.key,
-					"value": appkey.key
-				};
-			});
-			return item;
-		},
-		"dependencies.janrainapp": function(item) {
-			item.config.options = $.map(self.config.get("janrainapps"), function(app) {
-				return {
-					"title": app.name,
-					"value": app.name
-				};
-			});
-			return item;
-		}
-	};
-	return (function traverse(items, path) {
-		return $.map(items, function(item) {
-			var _path = path ? path + "." + item.name : item.name;
-			if (item.type === "object" && item.items) {
-				item.items = traverse(item.items, _path);
-			} else if (instructions[_path]) {
-				item = instructions[_path](item);
-			}
-			return item;
-		});
-	})(items, "");
-};
-
-dashboard.methods._fetchDataServerToken = function(callback) {
-	var self = this;
-	Echo.AppServer.API.request({
-		"endpoint": "customer/{id}/subscriptions",
-		"id": this.get("data.customer").id,
-		"onData": function(response) {
-			var token = Echo.Utils.foldl("", response, function(subscription, acc) {
-				return subscription.product.name === "dataserver"
-					? subscription.extra.token
-					: acc;
-			});
-			if (token) {
-				self.config.set("dataserverToken", token);
-				callback.call(self);
-			} else {
-				self._displayError(
-					self.labels.get("failedToFetchToken", {
-						"reason": self.labels.get("dataserverSubscriptionNotFound")
-					})
-				);
-			}
-		},
-		"onError": function(response) {
-			self._displayError(self.labels.get("failedToFetchToken", {"reason": response.data.msg}));
-		}
-	}).send();
-};
-
-dashboard.methods._displayError = function(message) {
-	this.showMessage({
-		"type": "error",
-		"message": message,
-		"target": this.config.get("target")
-	});
-	this.ready();
-};
-
-dashboard.methods._assembleTargetURL = function() {
-	return this.get("data.instance.config.targetURL")
-		|| this.get("data.instance.provisioningDetails.targetURL");
 };
 
 Echo.AppServer.Dashboard.create(dashboard);

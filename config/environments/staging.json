@@ -1,5 +1,5 @@
 {
-	"version": 3,
+	"version": 4,
 	"manifest": {
 		"id": "echo-media-gallery-30-dev",
 		"name": "Pinboard (Dev)"
@@ -10,6 +10,11 @@
 	},
 	"apiBaseURLs": {
 		"DataServer": "//ds0.ul.js-kit.com/api",
-		"AppServer": "http://api.staging.appserver.aboutecho.com"
+		"AppServer": "http://api.staging.appserver.aboutecho.com",
+		"StreamServer": {
+			"apiBaseURL": "//api.dss.ul.js-kit.com/v1",
+			"submissionProxyURL": "https://apps.dss.ul.js-kit.com/v2/esp/activity",
+			"websockets": "//live.dss.ul.js-kit.com/v1"
+		}
 	}
 }

@@ -1,5 +1,5 @@
 {
-	"version": 3,
+	"version": 4,
 	"manifest": {
 		"id": "echo-media-gallery-30",
 		"name": "Pinboard"
@@ -10,6 +10,11 @@
 	},
 	"apiBaseURLs": {
 		"DataServer": "https://api.dataserver.echoenabled.com/v1",
-		"AppServer": "http://api.appserver.aboutecho.com"
+		"AppServer": "http://api.appserver.aboutecho.com",
+		"StreamServer": {
+			"apiBaseURL": "//api.echoenabled.com/v1",
+			"submissionProxyURL": "https://apps.echoenabled.com/v2/esp/activity",
+			"websockets": "//live.echoenabled.com/v1"
+		}
 	}
 }
