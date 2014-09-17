@@ -4,10 +4,15 @@ module.exports = function(grunt) {
 		isotope: {
 			options: {
 				patcher: function(text) {
-					var re = grunt.config('env.name') === 'development'
+					var jqueryRe = grunt.config('env.name') === 'development'
 						? /window.jQuery/g
 						: /\w{1,2}\.jQuery/g;
-					return text.replace(re, 'Echo.jQuery');
+					var defineRe = grunt.config('env.name') === 'development'
+						? /typeof define === 'function' \&\& define\.amd/g
+						: /"function"==typeof define&&define.amd/g;
+					return text
+						.replace(jqueryRe, 'Echo.jQuery')
+						.replace(defineRe, 'false');
 				}
 			},
 			files: [{
