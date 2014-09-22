@@ -78,7 +78,7 @@ plugin.methods.destroy = function() {
 
 plugin.methods._destroyModal = function() {
 	if (!this.get("modal")) return; // modal doesn't exist
-	this.get("modal").hide();
+	this.get("modal").destroy();
 	this.remove("modal");
 };
 
