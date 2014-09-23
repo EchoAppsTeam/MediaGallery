@@ -10,9 +10,9 @@ gallery.config = {
 	"targetURL": undefined,
 	"nativeSubmissions": {
 		"visible": true,
-		"title": "Participate in our amazing video wall",
-		"description": "Tweet, Instagram, or Facebook with #awesome tag or submit your photos right on the page!",
-		"buttonText": "Submit your media"
+		"title": "",
+		"description": "",
+		"buttonText": "Post a photo!"
 	},
 	"presentation": {
 		"minColumnWidth": 250,
