@@ -51,7 +51,7 @@ plugin.events = {
 		var item = this.component.items[args.card.data.unique];
 		// define column properties (width/margin) for root items only
 		if (item && item.isRoot()) {
-			this._applyColumnPropertiesFor(item, true);
+			this._updateItemLayout(item, this._calcColumnWidth());
 		}
 	}
 };
@@ -126,26 +126,31 @@ plugin.methods._calcColumnWidth = function() {
 	return columnWidth;
 };
 
-plugin.methods._applyColumnPropertiesFor = function(items, force) {
+plugin.methods._applyColumnPropertiesFor = function(items) {
+	var self = this;
 	// take care of situations where column width:
 	//  - is unknown, i.e. it was not calculated yet
 	//  - should be recalculated due to window/container resize
 	var isWidthChanged = this._isAppWidthChanged();
-	if (!this.config.get("isotope.masonry.columnWidth") || isWidthChanged) {
-		this.config.set("isotope.masonry.columnWidth", this._calcColumnWidth());
+	var columnWidth = this._calcColumnWidth();
+	var currentColumnWidth = this.config.get("isotope.masonry.columnWidth");
+	if (!currentColumnWidth || isWidthChanged || columnWidth !== currentColumnWidth) {
+		this.config.set("isotope.masonry.columnWidth", columnWidth);
 	}
 
-	// exit if an app width was not changed and we
-	// do not want to force width/margin application
-	if (!isWidthChanged && !force) return;
+	// exit if an app width was not changed
+	if (!isWidthChanged && columnWidth === currentColumnWidth) return;
 
-	var width = this.config.get("isotope.masonry.columnWidth");
+	$.map(items, function(item) {
+		self._updateItemLayout(item, columnWidth);
+	});
+};
+
+plugin.methods._updateItemLayout = function(item, width) {
 	var margin = this.config.get("columnMargin");
-	$.map($.isArray(items) ? items : [items], function(item) {
-		item.config.get("target").css({
-			"margin-left": (margin / 2) + "px", // center-align cards
-			"width": (width - margin) + "px"
-		});
+	return item.config.get("target").css({
+		"margin-left": (margin / 2) + "px", // center-align cards
+		"width": (width - margin) + "px"
 	});
 };
 
