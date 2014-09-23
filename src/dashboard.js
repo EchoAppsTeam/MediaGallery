@@ -13,6 +13,12 @@ dashboard.vars = {
 			"advanced": {
 				"replyComposer": {
 					"visible": true
+				},
+				"topPosts": {
+					"replyNestingLevels": 2
+				},
+				"allPosts": {
+					"replyNestingLevels": 2
 				}
 			}
 		},
@@ -20,6 +26,12 @@ dashboard.vars = {
 			"advanced": {
 				"replyComposer": {
 					"visible": false
+				},
+				"topPosts": {
+					"replyNestingLevels": 0
+				},
+				"allPosts": {
+					"replyNestingLevels": 0
 				}
 			}
 		}
