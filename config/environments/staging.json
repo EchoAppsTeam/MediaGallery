@@ -2,7 +2,7 @@
 	"version": 4,
 	"manifest": {
 		"id": "echo-media-gallery-30-dev",
-		"name": "Pinboard Call to Action (Dev)"
+		"name": "Pinboard (Dev)"
 	},
 	"appBaseURLs": {
 		"dev": "//echoplatform.com/sandbox/staging<%= release.options.versionPath() %>/dev",
