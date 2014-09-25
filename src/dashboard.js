@@ -89,6 +89,7 @@ dashboard.config.ecl = [{
 		"component": "Input",
 		"name": "title",
 		"type": "string",
+		"default": "Pinboard Call to Action",
 		"config": {
 			"title": "Submission panel title",
 			"desc": "Specify a title for native submissions panel.",
@@ -99,6 +100,7 @@ dashboard.config.ecl = [{
 		"component": "Input",
 		"name": "description",
 		"type": "string",
+		"default": "More detailed instructions on participating in our Pinboard",
 		"config": {
 			"title": "Submission panel description",
 			"desc": "Specify a description for native submissions panel.",
@@ -109,6 +111,7 @@ dashboard.config.ecl = [{
 		"component": "Input",
 		"name": "buttonText",
 		"type": "string",
+		"default": "Post a photo!",
 		"config": {
 			"title": "Submit button text",
 			"desc": "Specify a text for submit button.",

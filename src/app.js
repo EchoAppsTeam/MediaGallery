@@ -10,8 +10,8 @@ gallery.config = {
 	"targetURL": undefined,
 	"nativeSubmissions": {
 		"visible": true,
-		"title": "",
-		"description": "",
+		"title": "Pinboard Call to Action",
+		"description": "More detailed instructions on participating in our Pinboard",
 		"buttonText": "Post a photo!"
 	},
 	"presentation": {

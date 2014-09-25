@@ -56,11 +56,13 @@ plugin.component.renderers.postComposer = function(element) {
 
 plugin.renderers.submitButton = function(element) {
 	var self = this;
+	var buttonText = this.config.get("nativeSubmissions.buttonText");
+	if (!buttonText) return element.remove();
 	new Echo.GUI.Button({
 		"target": element,
-		"label": this.config.get("nativeSubmissions.buttonText")
+		"label": buttonText
 	});
-	element.click(function() {
+	element.off("click").click(function() {
 		// trying to reuse previously created popup first,
 		// if it doesn't exist - build a new one!
 		if (self.get("modal")) {
