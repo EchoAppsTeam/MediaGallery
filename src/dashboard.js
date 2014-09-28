@@ -89,34 +89,32 @@ dashboard.config.ecl = [{
 		"component": "Input",
 		"name": "title",
 		"type": "string",
-		"default": "Pinboard Call to Action",
 		"config": {
 			"title": "Submission panel title",
 			"desc": "Specify a title for native submissions panel.",
 			"options": [],
-			"data": {"sample": "Participate in our amazing video wall"}
+			"data": {"sample": "Pinboard Call to Action"}
 		}
 	}, {
 		"component": "Input",
 		"name": "description",
 		"type": "string",
-		"default": "More detailed instructions on participating in our Pinboard",
 		"config": {
 			"title": "Submission panel description",
 			"desc": "Specify a description for native submissions panel.",
 			"options": [],
-			"data": {"sample": "Tweet, Instagram, or Facebook with #awesome tag or submit your photos right on the page!"}
+			"data": {"sample": "More detailed instructions on participating in our Pinboard"}
 		}
 	}, {
 		"component": "Input",
 		"name": "buttonText",
 		"type": "string",
-		"default": "Post a photo!",
+		"default": "Submit your photos",
 		"config": {
 			"title": "Submit button text",
 			"desc": "Specify a text for submit button.",
 			"options": [],
-			"data": {"sample": "Submit your media"}
+			"data": {"sample": "Submit your photos"}
 		}
 	}]
 }, {
