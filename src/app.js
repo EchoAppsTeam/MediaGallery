@@ -105,6 +105,15 @@ gallery.renderers.content = function(element) {
 					"presentation": presentation
 				}]
 			},
+			"topPosts": {
+				"plugins": [{
+					"name": "MediaCard",
+					"presentation": presentation
+				}, {
+					"name": "MediaCardCollection",
+					"presentation": presentation
+				}]
+			},
 			"plugins": [{
 				"name": "ModalComposer",
 				"nativeSubmissions": this.config.get("nativeSubmissions")
