@@ -38,7 +38,7 @@ gallery.config = {
 	"advanced": {
 		"topPosts": {
 			"visible": false,
-			"asyncItemsRendering": false,
+			"asyncItemsRendering": true,
 			"displayCounter": false,
 			"initialIntentsDisplayMode": "compact",
 			"slideTimeout": 0,
@@ -49,7 +49,7 @@ gallery.config = {
 			}
 		},
 		"allPosts": {
-			"asyncItemsRendering": false,
+			"asyncItemsRendering": true,
 			"displayCounter": false,
 			"initialIntentsDisplayMode": "compact",
 			"slideTimeout": 0,
