@@ -56,20 +56,6 @@ dashboard.dependencies = [{
 }];
 
 dashboard.config.ecl = [{
-	"name": "targetURL",
-	"component": "Echo.DataServer.Controls.Dashboard.DataSourceGroup",
-	"type": "string",
-	"required": true,
-	"config": {
-		"title": "",
-		"labels": {
-			"dataserverBundleName": "Echo MediaGallery Auto-Generated Bundle for {instanceName}"
-		},
-		"apiBaseURLs": {
-			"DataServer": "{%= apiBaseURLs.DataServer %}/"
-		}
-	}
-}, {
 	"component": "Group",
 	"name": "nativeSubmissions",
 	"type": "object",
@@ -241,6 +227,21 @@ dashboard.config.ecl = [{
 		}
 	},
 	"items": []
+}, {
+	"name": "targetURL",
+	"component": "Echo.DataServer.Controls.Dashboard.DataSourceGroup",
+	"type": "string",
+	"required": true,
+	"config": {
+		"title": "",
+		"expanded": false,
+		"labels": {
+			"dataserverBundleName": "Echo MediaGallery Auto-Generated Bundle for {instanceName}"
+		},
+		"apiBaseURLs": {
+			"DataServer": "{%= apiBaseURLs.DataServer %}/"
+		}
+	}
 }];
 
 dashboard.config.normalizer = {
