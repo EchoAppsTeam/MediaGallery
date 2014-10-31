@@ -56,6 +56,15 @@ dashboard.dependencies = [{
 }];
 
 dashboard.config.ecl = [{
+	"component": "Checkbox",
+	"name": "mediaContentOnly",
+	"type": "boolean",
+	"default": false,
+	"config": {
+		"title": "Display media content only",
+		"desc": "If True, only photos and videos will be displayed"
+	}
+}, {
 	"component": "Group",
 	"name": "nativeSubmissions",
 	"type": "object",

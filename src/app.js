@@ -8,6 +8,7 @@ var gallery = Echo.App.manifest("Echo.Apps.MediaGallery");
 gallery.config = {
 	"refreshOnUserInvalidate": false,
 	"targetURL": undefined,
+	"mediaContentOnly": false,
 	"nativeSubmissions": {
 		"visible": true,
 		"title": "",
@@ -86,7 +87,11 @@ gallery.templates.main =
 	'<div class="{class:content}"></div>';
 
 gallery.renderers.content = function(element) {
+	var self = this;
 	var presentation = this.config.get("presentation");
+	var getItemMarkers = function(section) {
+		return self.config.get("mediaContentOnly") ? ["photo", "video"] : self.config.get("advanced." + section + ".itemMarkers");
+	};
 	this.initComponent({
 		"id": "Conversations",
 		"component": "Echo.Apps.Conversations",
@@ -108,6 +113,7 @@ gallery.renderers.content = function(element) {
 						this.config.get("advanced.replyComposer.visible"))
 			},
 			"allPosts": {
+				"itemMarkers": getItemMarkers("allPosts"),
 				"plugins": [{
 					"name": "MediaCard",
 					"presentation": presentation
@@ -117,6 +123,7 @@ gallery.renderers.content = function(element) {
 				}]
 			},
 			"topPosts": {
+				"itemMarkers": getItemMarkers("topPosts"),
 				"plugins": [{
 					"name": "MediaCard",
 					"presentation": presentation
