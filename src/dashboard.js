@@ -61,7 +61,7 @@ dashboard.config.ecl = [{
 	"type": "boolean",
 	"default": false,
 	"config": {
-		"title": "Display media content only",
+		"title": "Only Photos and Videos",
 		"desc": "If True, only photos and videos will be displayed"
 	}
 }, {
