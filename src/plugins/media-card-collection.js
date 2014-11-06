@@ -67,6 +67,7 @@ $.map(["Echo.StreamServer.Controls.CardCollection.onRender",
 
 $.map(["Echo.StreamServer.Controls.Card.onDelete",
 	"Echo.Apps.Conversations.onAppResize",
+	"Echo.Apps.Conversations.onTabShown",
 	"Echo.StreamServer.Controls.Card.Plugins.MediaCard.onChangeView",
 	"Echo.StreamServer.Controls.CardComposer.Plugins.RepliesTuner.onChangeView"
 ], function(name) {
@@ -159,6 +160,12 @@ plugin.methods._refreshView = function() {
 	var stream = this.component;
 	var body = stream.view.get("body");
 	var hasEntries = stream.threads.length;
+
+	// Isotope doesn't work properly with hidden elements
+	// so we just prevent any Isotope calls while container is not visible.
+	if (!body.is(":visible")) {
+		return;
+	}
 
 	if (hasEntries) {
 		this._applyColumnPropertiesFor(stream.threads);
