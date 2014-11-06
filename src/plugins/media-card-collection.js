@@ -161,6 +161,8 @@ plugin.methods._refreshView = function() {
 	var body = stream.view.get("body");
 	var hasEntries = stream.threads.length;
 
+	// Isotope doesn't work properly with hidden elements
+	// so we just prevent any Isotope calls while container is not visible.
 	if (!body.is(":visible")) {
 		return;
 	}
