@@ -274,53 +274,8 @@ dashboard.config.normalizer = {
 	}
 };
 
-dashboard.modifiers = {
-	"dependencies.appkey": {
-		"endpoint": "customer/{self:user.getCustomerId}/appkeys",
-		"processor": function() {
-			return this.getAppkey.apply(this, arguments);
-		}
-	},
-	"dependencies.janrainapp": {
-		"endpoint": "customer/{self:user.getCustomerId}/janrainapps",
-		"processor": function() {
-			return this.getJanrainApp.apply(this, arguments);
-		}
-	},
-	"targetURL": {
-		"endpoint": "customer/{self:user.getCustomerId}/subscriptions",
-		"processor": function() {
-			return this.getBundleTargetURL.apply(this, arguments);
-		}
-	}
-};
-
 dashboard.init = function() {
 	this.parent();
-};
-
-dashboard.methods.declareInitialConfig = function() {
-	return $.extend(true, {
-		"targetURL": this.assembleTargetURL(),
-		"dependencies": {
-			"Janrain": {
-				"appId": this.getDefaultJanrainApp()
-			},
-			"StreamServer": {
-				"appkey": this.getDefaultAppKey()
-			},
-			"FilePicker": {
-				"apiKey": "AFLWUBllDRwWZl7sQO1V1z"
-			},
-			"embedly": {
-				"apiKey": "5945901611864679a8761b0fcaa56f87"
-			}
-		}
-	}, this.get("nestedOverrides.custom"));
-};
-
-dashboard.methods.declareConfigOverrides = function() {
-	return $.extend(true, this.parent(), this.get("nestedOverrides.original"));
 };
 
 Echo.AppServer.Dashboard.create(dashboard);
