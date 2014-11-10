@@ -274,6 +274,15 @@ dashboard.config.normalizer = {
 	}
 };
 
+dashboard.modifiers = {
+	"targetURL": {
+		"endpoint": "customer/{self:user.getCustomerId}/subscriptions",
+		"processor": function() {
+			return this.getBundleTargetURL.apply(this, arguments);
+		}
+	}
+};
+
 dashboard.init = function() {
 	this.parent();
 };
