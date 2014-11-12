@@ -275,6 +275,18 @@ dashboard.config.normalizer = {
 };
 
 dashboard.modifiers = {
+	"dependencies.appkey": {
+		"endpoint": "customer/{self:user.getCustomerId}/appkeys",
+		"processor": function() {
+			return this.getAppkey.apply(this, arguments);
+		}
+	},
+	"dependencies.janrainapp": {
+		"endpoint": "customer/{self:user.getCustomerId}/janrainapps",
+		"processor": function() {
+			return this.getJanrainApp.apply(this, arguments);
+		}
+	},
 	"targetURL": {
 		"endpoint": "customer/{self:user.getCustomerId}/subscriptions",
 		"processor": function() {
