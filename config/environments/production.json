@@ -10,7 +10,7 @@
 	},
 	"apiBaseURLs": {
 		"DataServer": "https://api.dataserver.echoenabled.com/v1",
-		"AppServer": "http://api.appserver.aboutecho.com",
+		"AppServer": "http://api.echostudio.co",
 		"StreamServer": {
 			"apiBaseURL": "//api.echoenabled.com/v1",
 			"submissionProxyURL": "https://apps.echoenabled.com/v2/esp/activity",

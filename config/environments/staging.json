@@ -1,20 +1,20 @@
 {
 	"version": 4,
 	"manifest": {
-		"id": "echo-media-gallery-30-dev",
-		"name": "Pinboard (Dev)"
+		"id": "echo-media-gallery-30",
+		"name": "Pinboard"
 	},
 	"appBaseURLs": {
-		"dev": "//echoplatform.com/sandbox/staging<%= release.options.versionPath() %>/dev",
-		"prod": "//echoplatform.com/sandbox/staging<%= release.options.versionPath() %>"
+		"dev": "//cdn.echoplatform.com<%= release.options.versionPath() %>/dev",
+		"prod": "//cdn.echoplatform.com<%= release.options.versionPath() %>"
 	},
 	"apiBaseURLs": {
 		"DataServer": "//ds0.ul.js-kit.com/api",
-		"AppServer": "http://api.staging.appserver.aboutecho.com",
+		"AppServer": "http://api.staging.echostudio.co",
 		"StreamServer": {
-			"apiBaseURL": "//api.dss.ul.js-kit.com/v1",
-			"submissionProxyURL": "https://apps.dss.ul.js-kit.com/v2/esp/activity",
-			"websockets": "//live.dss.ul.js-kit.com/v1"
+			"apiBaseURL": "//api.ss.ul.js-kit.com/v1",
+			"submissionProxyURL": "http://apps.ss.ul.js-kit.com/v2/esp/activity",
+			"websockets": "//live.ss.ul.js-kit.com/v1"
 		}
 	}
 }
