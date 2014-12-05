@@ -62,7 +62,7 @@ dashboard.config.ecl = [{
 	"default": false,
 	"config": {
 		"title": "Only Photos and Videos",
-		"desc": "If True, only photos and videos will be displayed"
+		"desc": "If enabled, only photos and videos will be displayed"
 	}
 }, {
 	"component": "Group",
@@ -75,10 +75,10 @@ dashboard.config.ecl = [{
 		"component": "Checkbox",
 		"name": "visible",
 		"type": "boolean",
-		"default": true,
+		"default": false,
 		"config": {
 			"title": "Allow Native Submissions",
-			"desc": "If True, users are provided the opportunity to upload photos and videos directly on the page"
+			"desc": "If enabled, users are provided the opportunity to upload photos and videos directly on the page"
 		}
 	}, {
 		"component": "Input",

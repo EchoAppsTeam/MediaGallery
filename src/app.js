@@ -10,7 +10,7 @@ gallery.config = {
 	"targetURL": undefined,
 	"mediaContentOnly": false,
 	"nativeSubmissions": {
-		"visible": true,
+		"visible": false,
 		"title": "",
 		"description": "",
 		"buttonText": "Submit your photos"
