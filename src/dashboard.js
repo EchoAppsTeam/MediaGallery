@@ -254,23 +254,22 @@ dashboard.config.ecl = [{
 }];
 
 dashboard.config.normalizer = {
-	"ecl": function(obj, component) {
-		var self = this;
-		return $.map(obj, function(field) {
-			if (field.name === "advanced") {
-				field.config = $.extend(true, field.config, {
+	"ecl": function(items, component) {
+		return items.map(function(item) {
+			if (item.name === "advanced") {
+				item.config = $.extend(true, item.config, {
 					"config": {
 						"data": $.extend(true, {
 							"instance": {
 								"config": component.get("nestedOverrides.custom")
 							}
-						}, self.get("data")),
-						"request": self.get("request")
+						}, this.get("data")),
+						"request": this.get("request")
 					}
 				});
 			}
-			return field;
-		});
+			return item;
+		}, this);
 	}
 };
 
@@ -297,6 +296,14 @@ dashboard.modifiers = {
 
 dashboard.init = function() {
 	this.parent();
+};
+
+dashboard.methods.update = function() {
+	var args = Array.prototype.slice.call(arguments);
+	args[0] = $.extend(true, {
+		"config": this.get("nestedOverrides.original")
+	}, args[0]);
+	this.parent.apply(this, args);
 };
 
 Echo.AppServer.Dashboard.create(dashboard);
