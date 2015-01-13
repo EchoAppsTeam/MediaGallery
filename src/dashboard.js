@@ -300,6 +300,8 @@ dashboard.init = function() {
 
 dashboard.methods.update = function() {
 	var args = Array.prototype.slice.call(arguments);
+	// merge both objects (nestedOverrides.original and args[0]) into new one
+	// to prevent overwriting nestedOverrides.original by args
 	args[0] = $.extend(true, {}, {
 		"config": this.get("nestedOverrides.original")
 	}, args[0]);
