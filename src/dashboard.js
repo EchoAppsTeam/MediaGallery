@@ -300,7 +300,7 @@ dashboard.init = function() {
 
 dashboard.methods.update = function() {
 	var args = Array.prototype.slice.call(arguments);
-	args[0] = $.extend(true, {
+	args[0] = $.extend(true, {}, {
 		"config": this.get("nestedOverrides.original")
 	}, args[0]);
 	this.parent.apply(this, args);
