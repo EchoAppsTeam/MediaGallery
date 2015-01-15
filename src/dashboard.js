@@ -298,10 +298,9 @@ dashboard.init = function() {
 	this.parent();
 };
 
-dashboard.methods.update = function() {
-	var args = Array.prototype.slice.call(arguments);
-	args[0].config = $.extend(true, {}, this.get("nestedOverrides.original"), args[0].config);
-	this.parent.apply(this, args);
+dashboard.methods.update = function(data) {
+	data.config = $.extend(true, {}, this.get("nestedOverrides.original"), data.config);
+	this.parent.apply(this, arguments);
 };
 
 Echo.AppServer.Dashboard.create(dashboard);
